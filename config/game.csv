@@ -1,0 +1,3 @@
+﻿id,name,description,default
+note_name,Note name,Select the note name that corresponds with the note on the fret board.,1
+note_string,Note string,Select the note on the fret board that corresponds with the note name.,

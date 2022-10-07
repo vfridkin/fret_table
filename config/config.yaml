@@ -1,0 +1,5 @@
+name: fRet-table
+version: 0.0.1
+author: Vlad Fridkin 
+year: 2022
+local_storage_id_prefix: fret_table_shiny_app
