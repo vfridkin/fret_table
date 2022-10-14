@@ -15,29 +15,33 @@ control_ui <- function(id){
   # Score is on bottom after the transport.
   
   tagList(
-    fluidRow(
-      style = "padding: 10px;"
-      , column(
-        width = 12
-        , transport_button(ns("setting_button"), "bars", style = "bordered")
-        , transport_button(ns("play_button"), "play")
-        , transport_button(ns("pause_button"), "pause", color = "warning")
-        , transport_button(ns("stop_button"), "stop", color = "danger")
-        , inline_selector(ns("game_select"), game_choices, game_selected, width = 300)
-        , inline_selector(ns("range_select"), range_choices, range_selected)
-        , inline_selector(ns("turns_select"), turns_choices, turns_selected, width = 100, multiple = FALSE)
-        , div(
-          style = "display: inline-block; width: 100px; height: 100px;"
+      div(
+        style = "display: inline-block; width: -webkit-calc(100vw - 135px); height: 50px;"
+        , fillRow(
+            flex = c(1, 5, 3, 3)
+            , transport_button(ns("setting_button"), "bars", style = "bordered")
+            , inline_selector(ns("game_select"), game_choices, game_selected, width = "100%")
+            , inline_selector(ns("range_select"), range_choices, range_selected, width = "100%")
+            , inline_selector(ns("turns_select"), turns_choices, turns_selected, width = "100%", multiple = FALSE)
+        ) # fluidRow
+        , fillRow(
+            div(
+              style = "width: 200px;"
+              , transport_button(ns("play_button"), "play")
+              , transport_button(ns("pause_button"), "pause", color = "warning")
+              , transport_button(ns("stop_button"), "stop", color = "danger")
+            )
+        ) # fluidRow
+      ) # div
+      , div(
+        style = "display: inline-block; width: 80px; vertical-align: top; margin-left: 10px"
           , img(
             height = 100
             , src = "pick_achu.png"
             , alt = "Opponent image"
           )
-        )
-      )
-    )
-  )
-  
+      ) # div
+  ) # tagList
   
 }
 

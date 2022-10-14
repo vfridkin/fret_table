@@ -1,7 +1,7 @@
 # Selector positioned inline with other elements
-inline_selector <- function(id, choices, selected, width = 200, multiple = TRUE){
+inline_selector <- function(id, choices, selected, width = "20vw", multiple = TRUE){
   div(
-    style = paste0("display: inline-block; width: ", width + 10,"px; padding: 5px;")
+    style = paste0("display: inline-block; width: ", width, "; padding: 5px;")
     , selectizeInput(
       id        
       , label = NULL
