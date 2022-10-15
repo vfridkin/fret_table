@@ -1,12 +1,13 @@
 #' Create a transport button
-transport_button <- function(id, icon_name, style = "simple", color = "primary"){
+transport_button <- function(id, icon_name, style = "", color = "primary", width = "40px"){
   div(
     style = "display: inline-block; padding: 5px;"
-    , actionBttn(
+    , actionButton(
       id
+      , label = NULL
       , style = style
-      , color = color
       , icon = icon(icon_name)
+      , width = width
     )
   ) # div
 }

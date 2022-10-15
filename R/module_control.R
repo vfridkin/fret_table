@@ -15,32 +15,38 @@ control_ui <- function(id){
   # Score is on bottom after the transport.
   
   tagList(
-      div(
-        style = "display: inline-block; width: -webkit-calc(100vw - 135px); height: 50px;"
-        , fillRow(
-            flex = c(1, 5, 3, 3)
-            , transport_button(ns("setting_button"), "bars", style = "bordered")
-            , inline_selector(ns("game_select"), game_choices, game_selected, width = "100%")
-            , inline_selector(ns("range_select"), range_choices, range_selected, width = "100%")
-            , inline_selector(ns("turns_select"), turns_choices, turns_selected, width = "100%", multiple = FALSE)
-        ) # fluidRow
-        , fillRow(
-            div(
-              style = "width: 200px;"
-              , transport_button(ns("play_button"), "play")
-              , transport_button(ns("pause_button"), "pause", color = "warning")
-              , transport_button(ns("stop_button"), "stop", color = "danger")
-            )
-        ) # fluidRow
-      ) # div
-      , div(
-        style = "display: inline-block; width: 80px; vertical-align: top; margin-left: 10px"
-          , img(
-            height = 100
-            , src = "pick_achu.png"
-            , alt = "Opponent image"
-          )
-      ) # div
+    div(
+      style = "display: inline-block; width: 90px; vertical-align: top; padding-top: 5px;"       
+      , transport_button(ns("play_button"), "play", width = "80px"
+                         , style = "height: 80px; font-size: xx-large; color: #f5ebe0; background-color: #06d6a0;")
+    )
+    , div(
+      style = "display: inline-block; width: 50px; vertical-align: top; padding-top: 5px;"      
+      , transport_button(ns("setting_button"), "info", style = "height: 35px; color: #f5ebe0; background-color: #073b4c; font-size: larger;")
+      , transport_button(ns("stop_button"), "stop", style = "height: 35px; color: #f5ebe0; background-color: #ef476f;")  # Pause: #ffd166
+    )
+    , div(
+      style = "display: inline-block; width: -webkit-calc(100vw - 280px); height: 50px;"
+      , fillRow(
+        flex = c(5, 3, 3)
+        , inline_selector(ns("game_select"), game_choices, game_selected, width = "100%")
+        , inline_selector(ns("range_select"), range_choices, range_selected, width = "100%")
+        , inline_selector(ns("turns_select"), turns_choices, turns_selected, width = "100%", multiple = FALSE)
+      ) # fluidRow
+      , fillRow(
+        div(
+          style = "width: 200px;"
+        )
+      ) # fluidRow
+    ) # div
+    , div(
+      style = "display: inline-block; width: 80px; vertical-align: top; margin-left: 10px"
+      , img(
+        height = 100
+        , src = "pick_achu.png"
+        , alt = "Opponent image"
+      )
+    ) # div
   ) # tagList
   
 }
