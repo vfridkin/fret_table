@@ -3,7 +3,7 @@ main_ui <- function(id){
   ns <- NS(id)
   
   tagList(
-    control_ui("control")
+    control_ui(ns("control"))
   )
   
   

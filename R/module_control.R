@@ -32,12 +32,18 @@ control_ui <- function(id){
         , inline_selector(ns("game_select"), game_choices, game_selected, width = "100%")
         , inline_selector(ns("range_select"), range_choices, range_selected, width = "100%")
         , inline_selector(ns("turns_select"), turns_choices, turns_selected, width = "100%", multiple = FALSE)
-      ) # fluidRow
+      ) # Row
       , fillRow(
-        div(
-          style = "width: 200px;"
+        flex = c(1,5)
+        , div(
+          style = "display: flex; font-size: xx-large; padding-left: 10px; text-align: center; width: 100%; "
+          , textOutput(ns("timer"))
         )
-      ) # fluidRow
+        , div(
+          style = "display: flex; font-size: xx-large; font-weight: 900; margin-top: -10px; padding-left: 5px;"
+          , reactableOutput(ns("score"), width = "100%")
+        )
+      ) # Row
     ) # div
     , div(
       style = "display: inline-block; width: 80px; vertical-align: top; margin-left: 10px"
@@ -57,6 +63,44 @@ control_server <- function(id, k_, r_ = reactive(NULL)){
     , function(input, output, session){
       
       ns <- session$ns
+      
+      m <- reactiveValues(
+        run_once = TRUE
+        , game_select = NULL
+        , range_select = NULL
+        , turns_select = NULL
+      )
+      
+      observeEvent(input$turns_select, m$turns_select <- input$turns_select)
+      
+      answer <- list(
+        "FALSE" = "<span style = 'color: red; padding: 0;'>×</span>"
+        , "TRUE" = "<span style = 'color: green; padding: 0;'>♪</span>"
+      )
+      
+      
+      output$timer <- renderText({
+        # invalidateLater(1000, session)
+        "0:00"
+      })
+      
+      output$score <- renderReactable({
+        
+        # Initialise data to have an empty score
+        df <- data.table(s1 = "")
+        
+        col_names <- paste0("s", 1:m$turns_select)
+        
+        for(col in col_names){
+          df[[col]] <- answer[["TRUE"]]
+        }
+        
+        reactable(
+          df
+          , defaultColDef = colDef(headerClass = "score-header", html = TRUE, minWidth = 24, maxWidth = 200)
+        )
+      })
+      
       
     } # function
   ) # moduleServer

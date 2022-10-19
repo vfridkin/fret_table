@@ -3,3 +3,19 @@
   vertical-align: middle;
   top: 5px;
 }
+
+/* Do not wrap selectize inputs */
+.selectize-input {
+  white-space: nowrap;
+}
+
+/* remove score header */
+.score-header {
+  visibility: hidden;
+  height: 0;
+}
+
+#main-control-timer {
+  text-align: center;
+  width: 100%;
+}
