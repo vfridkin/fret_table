@@ -9,7 +9,7 @@
 # Y88b. .d88P   888   d8b 888  T88b
 #  "Y88888P"  8888888 Y8P 888   T88b
 
-###################################################################################################
+################################################################################
 #
 # -= Welcome to Fret Table =-
 #
@@ -19,7 +19,7 @@
 # > fret - the guitar fret in the middle (using reactable)
 # v note - the note name buttons below (using reactables)
 # > setting - app settings
-# > help 
+# > help
 #
 # Summary of design
 # ~~~~~~~~~~~~~~~~~
@@ -30,18 +30,14 @@
 #
 # Thanks for reading and hope you enjoy the app, Vlad Fridkin 2022
 #
-###################################################################################################
+################################################################################
 
 fluidPage(
-  
   # CSS and JS files - for animation, styling and custom interactions
   load_styles()
   # , includeScript("www/script.js")
-  
   # Tour dependency
   , introjsUI()
-  
   # Main
   , main_ui("main")
-  
 )
