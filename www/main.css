@@ -19,3 +19,55 @@
   text-align: center;
   width: 100%;
 }
+
+/* fret display */
+.headstock-string {
+  background-color: #e59317;
+  border-bottom: transparent;
+  border-top: transparent;
+  position: absolute;
+}
+
+.guitar-string {
+  background-color: #966F33;
+  border-bottom: transparent;
+  border-top: transparent;
+  position: relative;
+}
+
+.headstock-string::before {
+  content: "";
+  display: block;
+  width: 7px;
+  height: 100%;
+  background-color: #F6F1EA; /* silver */
+  right: 0%;
+  border-color: transparent;
+  position: absolute;
+  z-index: 1;
+}
+
+.guitar-string::before {
+  content: "";
+  display: block;
+  width: 3px;
+  height: 100%;
+  background-color: #aaa9ad; /* silver */
+  right: 0%;
+  border-color: transparent;
+  position: absolute;
+  z-index: 1;
+}
+
+.guitar-string::after, .headstock-string::after{
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--thickness);
+  background-color: #efd5b8; /* guitar string colour */
+  top: 50%;
+  border-color: transparent;
+  position: absolute;
+  z-index: 3;
+  box-shadow: 0px 1px #888888;
+}

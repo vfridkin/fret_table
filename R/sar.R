@@ -9,6 +9,7 @@ sar <- function() {
 # Run app from vscode
 vsar <- function() {
   source("global.R")
+  rstudioapi::documentSaveAll()
   app_dir <- "C:/Users/vfrid/Documents/R_projects//fret_table"
   runApp(app_dir, launch.browser = TRUE)
 }
