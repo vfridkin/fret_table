@@ -13,6 +13,7 @@ control_ui <- function(id) {
   # Transport and game choices
 
   tagList(
+    div(style = "margin-top: 5px;"),
     div(
       style = "
       display: inline-block;
@@ -82,8 +83,8 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(input$turns_select, m$turns_select <- input$turns_select)
 
       answer <- list(
-        "FALSE" = "<span style = 'color: red; padding: 0;'>×</span>",
-        "TRUE" = "<span style = 'color: green; padding: 0;'>♪</span>"
+        "FALSE" = "<span style = 'color: #ef476f; padding: 0;'>×</span>",
+        "TRUE" = "<span style = 'color: #06d6a0; padding: 0;'>♪</span>"
       )
 
 
@@ -99,7 +100,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         col_names <- paste0("s", 1:m$turns_select)
 
         for (col in col_names) {
-          df[[col]] <- answer[["TRUE"]]
+          df[[col]] <- answer[["FALSE"]]
         }
 
         reactable(
