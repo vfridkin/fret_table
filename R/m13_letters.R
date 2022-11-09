@@ -103,13 +103,28 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                 )
               }
               if (str_detect(name, "sharp|natural|flat")) {
-                css_class <- if (str_detect(name, "natural")) "natural" else "accidental"
+                is_accidental <- str_detect(name, "sharp|flat")
+
+                background_index <- if (is_accidental) "accidental" else "natural"
+                text_index <- if (is_accidental) "natural" else "accidental"
+
+                background_colour <- k$colour[[background_index]]
+                text_colour <- k$colour[[text_index]]
+
                 res <- colDef(
                   name = "",
                   cell = function(value, rowIndex, colName) {
                     as.character(tags$div(
                       style = "height: 100%; width: 100%;",
-                      tags$button(value, class = css_class, onclick = sprintf("", name)),
+                      tags$button(
+                        value,
+                        class = "letter",
+                        style = paste0(
+                          "--letter-background-colour:", background_colour,
+                          "; --letter-text-colour: ", text_colour
+                        ),
+                        onclick = sprintf("", name)
+                      ),
                     )) # sprintf('alert("approve - %s")', name)
                   }
                 )

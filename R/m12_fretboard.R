@@ -27,7 +27,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
         df <- data.table(headstock = string_count:1)
         for (fret in 1:fret_count) {
-          df[[paste0("fret", fret)]] <- string_count:1
+          df[[paste0("fret", fret)]] <- "<span class='dot'><span class='dot-text'>C♯</span></span>"
         }
 
         columns <- get_col_def(fret_count)
@@ -59,6 +59,7 @@ get_col_def <- function(fret_count) {
     )
   )
 
+  notes <- c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B")
   fret_names <- paste0("fret", 1:fret_count)
   thickness <- c(4, 3, 2, 2, 1, 1)
   rotation <- c(0, 1, 2, -2, -1, 0)

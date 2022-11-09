@@ -26,17 +26,24 @@
    strings are x-string::after */
 .headstock-string {
   background-color: #e59317; /* headstock background */
-  border-bottom: transparent;
-  border-top: transparent;
+  border: transparent;
   position: absolute;
 }
 
 .guitar-string {
   background-color: #966F33; /* fret background */
-  border-bottom: transparent;
-  border-top: transparent;
+  border: transparent;
   position: relative;
 }
+
+.headstock-string:hover {
+  background-color:  rgba(229,147,23, 0.9)
+}
+
+.guitar-string:hover {
+  background-color:  rgba(150, 111, 51, 0.9)
+}
+
 
 /* nut */
 .headstock-string::before {
@@ -66,6 +73,7 @@
   z-index: 1;
 }
 
+/* string */
 .guitar-string::after, .headstock-string::after{
   content: "";
   display: block;
@@ -73,7 +81,7 @@
   height: var(--thickness);
   /* background-color: #efd5b8; guitar string */
   background:linear-gradient( to bottom, #bcc6cc, #eee, #bcc6cc);
-  top: 50%;
+  top: 46%;
   border-color: transparent;
   position: absolute;
   z-index: 3;
@@ -109,4 +117,35 @@
   border-radius: 0.5rem;
   border-color: #888888;
   border-width: 1px;
+}
+
+.letter {
+  width: 100%;
+  height: 100%;
+  color: var(--letter-text-colour);
+  background-color: var(--letter-background-colour);
+  border-radius: 0.5rem;
+  border-color: #888888;
+  border-width: 1px;
+}
+
+/* fret dots */
+.dot {
+  height: 30px;
+  width: 30px;
+  padding: 0;
+  /* background-color: #bbb; */
+  background:linear-gradient( to bottom, #bcc6cc, #eee, #bcc6cc);
+  border-radius: 50%;
+  display: inline-block;
+  z-index: 4;
+  position: absolute;
+  left: 35%;
+  top: 5%;
+}
+
+.dot-text {
+  position: relative;
+  top: 15%;
+  font-weight: 600;
 }
