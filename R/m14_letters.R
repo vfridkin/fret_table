@@ -16,7 +16,7 @@ letters_ui <- function(id) {
 
   div(
     id = ns("piano"),
-    style = "margin-top: 30px;",
+    style = "margin-top: 7px;",
     in_row(reactableOutput(ns("sharps_rt")), width),
     in_row(reactableOutput(ns("naturals_rt")), width),
     in_row(reactableOutput(ns("flats_rt")), width)
@@ -83,7 +83,12 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           df,
           columns = columns,
           sortable = FALSE,
-          defaultColDef = colDef(headerClass = "score-header", html = TRUE, minWidth = 30, align = "center")
+          defaultColDef = colDef(
+            headerClass = "score-header",
+            html = TRUE,
+            minWidth = 30,
+            align = "center"
+          )
         )
       }
 
@@ -91,22 +96,21 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         notes %>%
           imap(
             function(value, name) {
-              if (str_detect(name, "halfkey")) {
-                res <- colDef(
-                  name = "",
-                  minWidth = 15,
-                )
+              is_halfkey <- str_detect(name, "halfkey")
+              is_nokey <- str_detect(name, "nokey")
+              is_key <- str_detect(name, "sharp|natural|flat")
+
+              if (is_halfkey) {
+                res <- colDef(name = "", minWidth = 15)
               }
-              if (str_detect(name, "nokey")) {
-                res <- colDef(
-                  name = "",
-                )
+              if (is_nokey) {
+                res <- colDef(name = "")
               }
-              if (str_detect(name, "sharp|natural|flat")) {
+              if (is_key) {
                 is_accidental <- str_detect(name, "sharp|flat")
 
-                background_index <- if (is_accidental) "accidental" else "natural"
-                text_index <- if (is_accidental) "natural" else "accidental"
+                background_index <- iff(is_accidental, "accidental", "natural")
+                text_index <- iff(is_accidental, "natural", "accidental")
 
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]

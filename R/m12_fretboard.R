@@ -21,16 +21,34 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       output$fretboard_rt <- renderReactable({
         # Fretboard has a headstock and at least 12 frets
+        # Headstock is fret0
 
-        string_count <- 6
-        fret_count <- 12
+        accidental <- "sharp"
+        fret_names <- paste0("fret", 0:k$fret_count)
 
-        df <- data.table(headstock = string_count:1)
-        for (fret in 1:fret_count) {
-          df[[paste0("fret", fret)]] <- "<span class='dot'><span class='dot-text'>C♯</span></span>"
-        }
+        df <- k$open_notes %>%
+          map(
+            function(open_note) {
+              string_notes(open_note, accidental) %>%
+                map_chr(as_note_html)
+            }
+          ) %>%
+          as.data.table() %>%
+          t() %>%
+          as.data.table() %>%
+          set_names(fret_names)
 
-        columns <- get_col_def(fret_count)
+        # Add fret markers
+        cols <- paste0("fret", c(3, 5, 7, 9))
+        fn <- function(x) paste0("<span class='fret-marker'></span>", x)
+        fn2 <- function(x) paste0("<span class='fret-marker2'></span>", x)
+
+        df[3, (cols) := lapply(.SD, fn), .SDcols = cols]
+        df[c(2, 4), fret12 := fn(fret12)]
+        df[4, (cols) := lapply(.SD, fn2), .SDcols = cols]
+        df[c(3, 5), fret12 := fn2(fret12)]
+
+        columns <- get_col_def(k$fret_count)
 
         reactable(
           df,
@@ -45,26 +63,23 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
 get_col_def <- function(fret_count) {
   headstock_coldef <- list(
-    headstock = colDef(
+    fret0 = colDef(
       name = "",
       class = "headstock-string",
       style = function(value, index, name) {
         paste0(
           "position: relative;
-          --thickness: ", thickness[index], "px;
-          --rotation: ", rotation[index], "deg;
+          --thickness: ", k$string_thickness[index], "px;
+          --rotation: ", k$string_rotation[index], "deg;
           "
         )
       }
     )
   )
 
-  notes <- c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B")
-  fret_names <- paste0("fret", 1:fret_count)
-  thickness <- c(4, 3, 2, 2, 1, 1)
-  rotation <- c(0, 1, 2, -2, -1, 0)
+  fret_names <- paste0("fret", 1:k$fret_count)
 
-  frets_coldef <- 1:fret_count %>%
+  frets_coldef <- 1:k$fret_count %>%
     map(
       ~ colDef(
         name = "",
@@ -74,7 +89,7 @@ get_col_def <- function(fret_count) {
         class = "guitar-string",
         style = function(value, index, name) {
           paste0(
-            "position: relative; --thickness: ", thickness[index], "px;"
+            "position: relative; --thickness: ", k$string_thickness[index], "px;"
           )
         }
       )

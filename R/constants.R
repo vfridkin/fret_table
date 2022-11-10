@@ -6,6 +6,16 @@ k <- list(
         button_stop = "#ef476f",
         button_pause = "#ffd166",
         natural = "#f5f2e7",
-        accidental = "#202020"
-    )
+        natural_darker = "#d9cea4",
+        natural_lighter = "#ffffff",
+        accidental = "#202020",
+        accidental_darker = "#1a1a1a",
+        accidental_lighter = "#282828"
+    ),
+    notes = c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B"),
+    string_count = 6,
+    fret_count = 12,
+    open_notes = c("E", "A", "D", "G", "B", "E") %>% rev(),
+    string_thickness = c(4, 3, 2, 2, 1, 1),
+    string_rotation = c(0, 1, 2, -2, -1, 0)
 )

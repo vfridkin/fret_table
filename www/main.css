@@ -28,12 +28,14 @@
   background-color: #e59317; /* headstock background */
   border: transparent;
   position: absolute;
+  height: 32px;
 }
 
 .guitar-string {
   background-color: #966F33; /* fret background */
   border: transparent;
   position: relative;
+  height: 32px;
 }
 
 .headstock-string:hover {
@@ -93,6 +95,38 @@
   transform-origin: center right;
 }
 
+:root {
+  --fret-marker-size: 12px;
+}
+
+/* fret marker */
+.fret-marker {
+  height: var(--fret-marker-size);
+  width: var(--fret-marker-size);
+  padding: 0;
+  background-color: #bcc6cc;
+  border-radius: 50%;
+  display: inline-block;
+  z-index: 4;
+  position: absolute;
+  left: 42%;
+  top: 26px;
+}
+
+.fret-marker2 {
+  height: var(--fret-marker-size);
+  width: var(--fret-marker-size);
+  padding: 0;
+  background-color: #bcc6cc;
+  border-radius: 50%;
+  display: inline-block;
+  z-index: 4;
+  position: absolute;
+  left: 42%;
+  top: -6px;
+}
+
+
 /* letters */
 #main-letters-piano .rt-td-inner {
   padding: 1px;
@@ -134,14 +168,15 @@
   height: 30px;
   width: 30px;
   padding: 0;
-  /* background-color: #bbb; */
-  background:linear-gradient( to bottom, #bcc6cc, #eee, #bcc6cc);
+  background:linear-gradient( to bottom, var(--gradient-edge), var(--gradient), var(--gradient-edge));
+  color: var(--dot-text);
   border-radius: 50%;
   display: inline-block;
   z-index: 4;
   position: absolute;
-  left: 35%;
-  top: 5%;
+  left: 33%;
+  top: 1px;
+  visibility: hidden;
 }
 
 .dot-text {

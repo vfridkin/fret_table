@@ -38,8 +38,7 @@ control_ui <- function(id) {
         vertical-align:
         top; padding-top: 5px;
       ",
-      transport_button(
-        ns("setting_button"),
+      transport_button(ns("setting_button"),
         "info",
         style = glue("
           height: 35px;
@@ -48,8 +47,7 @@ control_ui <- function(id) {
           font-size: larger;
         ")
       ),
-      transport_button(
-        ns("stop_button"),
+      transport_button(ns("stop_button"),
         "stop",
         style = glue("
         height: 35px;

@@ -8,6 +8,7 @@ main_ui <- function(id) {
     ),
     control_ui(ns("control")),
     fretboard_ui(ns("fretboard")),
+    learn_ui(ns("learn")),
     letters_ui(ns("letters"))
   )
 }
@@ -20,6 +21,7 @@ main_server <- function(id, k_) {
 
       control_server("control", "k_")
       fretboard_server("fretboard", "k_")
+      learn_server("learn", "k_")
       letters_server("letters", "k_")
     } # function
   ) # moduleServer
