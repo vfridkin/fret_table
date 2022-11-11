@@ -1,0 +1,11 @@
+OK change learn from selectize to buttons with same rules
+OK transport buttons change state
+OK state play activates timer
+OK state stop stops timer
+Show dots based on learn 
+show dots based on letter choice
+game settings -> state
+design game log dataframe
+design questions from game settings
+create questions based on settings and log
+ 

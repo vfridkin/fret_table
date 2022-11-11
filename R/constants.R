@@ -16,6 +16,6 @@ k <- list(
     string_count = 6,
     fret_count = 12,
     open_notes = c("E", "A", "D", "G", "B", "E") %>% rev(),
-    string_thickness = c(4, 3, 2, 2, 1, 1),
+    string_thickness = c(1, 1, 2, 2, 3, 4),
     string_rotation = c(0, 1, 2, -2, -1, 0)
 )

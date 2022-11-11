@@ -127,8 +127,24 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         run_once = TRUE,
         game_select = NULL,
         range_select = NULL,
-        turns_select = NULL
+        turns_select = NULL,
+        start_time = NULL
       )
+
+      # Transport buttons ------------------------------------------------------
+
+      # > Play -----------------------------------------------------------------
+      observeEvent(input$play_button, {
+        state$playing <- TRUE
+        state$play_seconds <- 0
+        m$start_time <- Sys.time()
+      })
+
+      # > Stop -----------------------------------------------------------------
+      observeEvent(input$stop_button, {
+        state$playing <- FALSE
+        state$play_seconds <- 0
+      })
 
       observeEvent(
         input$turns_select,
@@ -148,10 +164,24 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           '>×</span>")
       )
 
+      play_duration <- reactive({
+        if (state$playing) {
+          invalidateLater(1000)
+          state$play_seconds <- difftime(
+            Sys.time(),
+            m$start_time,
+            units = "secs"
+          )
+        }
+        state$play_seconds
+      })
+
 
       output$timer <- renderText({
-        # invalidateLater(1000, session)
-        "0:00"
+        td <- seconds_to_period(play_duration())
+        seconds <- round(second(td))
+        minutes <- round(minute(td))
+        sprintf("%02d:%02d", minutes, seconds)
       })
 
       output$score <- renderReactable({

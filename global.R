@@ -25,12 +25,15 @@ library(purrr)
 library(magrittr)
 library(jsonlite)
 library(rintrojs)
+library(lubridate)
+
+# Load app config - sources YAML and CSV files
+source("R/load_config.R")
+ac <- load_config()
 
 # Load files
 list.files("R", full.names = TRUE) %>% walk(source)
 
-# Load app config - sources YAML and CSV files
-ac <- load_config()
 
 # Remove scientific notation
 options(scipen = 999)

@@ -23,7 +23,9 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         # Fretboard has a headstock and at least 12 frets
         # Headstock is fret0
 
-        accidental <- "sharp"
+        learn_select <- state$learn_select
+
+        accidental <- iff("flat" %in% learn_select, "flat", "sharp")
         fret_names <- paste0("fret", 0:k$fret_count)
 
         df <- k$open_notes %>%

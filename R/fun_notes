@@ -50,37 +50,38 @@ as_note_text <- function(note) {
         str_replace("\\-", "♭")
 }
 
-        as_note_html <- function(note) {
-          this_note <- list(
-            name = substr(note, 1, 1),
-            accidental = substr(note, 2, 2)
-          )
+as_note_html <- function(note) {
+    this_note <- list(
+        name = substr(note, 1, 1),
+        accidental = substr(note, 2, 2)
+    )
 
-          is_accidental <- this_note$accidental != ""
-          note_text <- note %>% as_note_text()
+    is_accidental <- this_note$accidental != ""
+    note_text <- note %>% as_note_text()
 
-          fn <- function(is_accidental_colour, is_not_accidental_colour) {
-            iff(
-              is_accidental,
-              k$colour[[is_accidental_colour]],
-              k$colour[[is_not_accidental_colour]]
-            )
-          }
-          gradient_colour <- fn("accidental", "natural")
-          gradient_edge_colour <- fn("accidental_lighter", "natural_darker")
-          dot_text_colour <- fn("natural", "accidental")
+    fn <- function(is_accidental_colour, is_not_accidental_colour) {
+        iff(
+            is_accidental,
+            k$colour[[is_accidental_colour]],
+            k$colour[[is_not_accidental_colour]]
+        )
+    }
+    gradient_colour <- fn("accidental", "natural")
+    gradient_edge_colour <- fn("accidental_lighter", "natural_darker")
+    dot_text_colour <- fn("natural", "accidental")
 
-          style <- paste0(
-            "--gradient: ", gradient_colour, ";
+    style <- paste0(
+        "--gradient: ", gradient_colour, ";
             --gradient-edge: ", gradient_edge_colour, ";
             --dot-text: ", dot_text_colour, ";
+            --dot-visible: visible;
             "
-          )
+    )
 
-          glue("
+    glue("
             <span class='dot' style ='{style}'>
               <span class='dot-text'>
                 {note_text}
               </span>
             </span>")
-        }
+}
