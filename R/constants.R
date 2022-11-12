@@ -19,5 +19,17 @@ k <- tibble::lst(
     fret_names = paste0("fret", 0:fret_count),
     open_notes = c("E", "A", "D", "G", "B", "E") %>% rev(),
     string_thickness = c(1, 1, 2, 2, 3, 4),
-    string_rotation = c(0, 1, 2, -2, -1, 0)
+    string_rotation = c(0, 1, 2, -2, -1, 0),
+    answer_html <- list(
+        "TRUE" = glue("
+          <span style = '
+          color: {k$colour$button_info};
+          padding: 0;
+          '>♪</span>"),
+        "FALSE" = glue("
+          <span style = '
+            color: {k$colour$button_stop};
+            padding: 0;
+          '>×</span>")
+    )
 )

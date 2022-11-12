@@ -22,17 +22,30 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         run_once = TRUE
       )
 
-      # fret table raw
+      # fret table without html formatting
       fret_data <- eventReactive(
         list(
-          state$letter_select
+          state$letter_select,
+          state$fret_select
         ),
         {
-          display <- state$letter_select
+          note_count <- length(k$open_notes)
+          source <- state$input_source %>% if_null_then("letter")
 
-          df <- k$open_notes %>%
+          this <- iff(
+            source == "letter",
+            list(
+              rows = 1:note_count,
+              display = state$letter_select
+            ),
+            display_from_fret(state$fret_select)
+          )
+
+          df <- 1:note_count %>%
             map(
-              function(open_note) {
+              function(row) {
+                open_note <- k$open_notes[row]
+                display <- iff(row %in% this$rows, this$display, "")
                 string_notes(open_note, display)
               }
             ) %>%
@@ -60,9 +73,9 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       output$fretboard_rt <- renderReactable({
         df <- fret_display()
-        columns <- get_col_def(k$fret_count)
+        columns <- get_fret_col_def(k$fret_count)
 
-        hover_input <- ns("fret_hover")
+        # Hover is handled by script.js
         click_input <- ns("fret_click")
 
         reactable(
@@ -87,11 +100,11 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # Observe fret select --------------------------------------------------
       observeEvent(
-        input$fret_hover,
+        input$fret_click,
         {
-          req(state$is_learning)
-          browser()
-          state$fret_select <- input$fret_hover
+          req(state$is_playing)
+          state$fret_select <- input$fret_click
+          state$input_source <- "fret"
         }
       )
 
@@ -103,58 +116,14 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
           cell_coords <- cell_class %>%
             strsplit(" ") %>%
             pluck(1) %>%
-            tail(2)
-          print(cell_coords)
+            tail(2) %>%
+            set_names(c("row", "col")) %>%
+            as.list()
+          cell_coords$row %<>% as.integer()
           state$fret_select <- cell_coords
+          state$input_source <- "fret"
         }
       )
     } # function
   ) # moduleServer
 } # fretboard_server
-
-
-get_col_def <- function(fret_count) {
-  headstock_coldef <- list(
-    fret0 = colDef(
-      name = "",
-      class = "headstock-string",
-      style = function(value, index, name) {
-        paste0(
-          "position: relative;
-          --thickness: ", k$string_thickness[index], "px;
-          --rotation: ", k$string_rotation[index], "deg;
-          "
-        )
-      }
-    )
-  )
-
-  fret_names <- paste0("fret", 1:k$fret_count)
-
-  fret_min_width <- function(fret) {
-    round(50 * (1 - fret / 24))
-  }
-
-  frets_coldef <- 1:k$fret_count %>%
-    map(
-      function(fret) {
-        colDef(
-          name = "",
-          minWidth = fret_min_width(fret),
-          html = TRUE,
-          align = "center",
-          class = function(value, index, name) {
-            paste("guitar-string", index, name)
-          },
-          style = function(value, index, name) {
-            paste0(
-              "position: relative; --thickness: ", k$string_thickness[index], "px;"
-            )
-          }
-        )
-      }
-    ) %>%
-    set_names(fret_names)
-
-  c(headstock_coldef, frets_coldef)
-}

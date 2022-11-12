@@ -148,22 +148,21 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         state$play_seconds <- 0
       })
 
+
+      # Game settings ----------------------------------------------------------
+      observeEvent(
+        input$game_select,
+        m$game_select <- input$game_select
+      )
+
+      observeEvent(
+        input$range_select,
+        m$range_select <- input$range_select
+      )
+
       observeEvent(
         input$turns_select,
         m$turns_select <- input$turns_select
-      )
-
-      answer <- list(
-        "TRUE" = glue("
-          <span style = '
-          color: {k$colour$button_info};
-          padding: 0;
-          '>♪</span>"),
-        "FALSE" = glue("
-          <span style = '
-            color: {k$colour$button_stop};
-            padding: 0;
-          '>×</span>")
       )
 
       play_duration <- reactive({
@@ -178,7 +177,6 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         state$play_seconds
       })
 
-
       output$timer <- renderText({
         td <- seconds_to_period(play_duration())
         seconds <- round(second(td))
@@ -186,15 +184,42 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         sprintf("%02d:%02d", minutes, seconds)
       })
 
-      output$score <- renderReactable({
+      questions <- reactive({
+        # | turn | question_type | ask |
+
+        browser()
+        game <- m$game_select
+        range <- m$range_select
+        turns <- m$turns_select
+
+        question_types <- sample(game, turns, replace = TRUE)
+        asks <- get_asks(question_types, range)
+
+        df <- data.table(
+          turn = 1:m$turns_select,
+          question_type = question_types,
+          ask = asks
+        )
+      })
+
+      observe(questions())
+
+      score <- reactive({
         # Initialise data to have an empty score
         df <- data.table(s1 = "")
-
         col_names <- paste0("s", 1:m$turns_select)
 
-        for (col in col_names) {
-          df[[col]] <- answer[["FALSE"]]
+        for (turn in 1:m$turns_select) {
+          col <- col_names[turn]
+          valid_turn <- turn <= state$play_turn
+          df[[col]] <- iff(valid_turn, answer_html[["FALSE"]], "")
         }
+
+        df
+      })
+
+      output$score <- renderReactable({
+        df <- score()
 
         reactable(
           df,

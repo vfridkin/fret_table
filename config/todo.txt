@@ -7,19 +7,24 @@ OK - all sharps
 OK - all naturals
 OK - all flats
 OK - all of a single note
-- one single note
-
+OK - one single note
 playing state....
+
+OK - init score
+create question when play button pressed
+
 
 game settings -> state
 design game log dataframe
 
- SELECTED: game | range | turns | PLAYING: start datetime | event datetime | turn | fret/letter | Question | Response | Accuracy  
+ SELECTED: game | range | turns | PLAYING: start datetime | event datetime | turn | question_type | Ask | Response | Accuracy  
 
 design questions from game settings
 - rules for selecting questions
   - weighted on incorrect responses
   - 
+
+| turn | question_type | ask |
 
 
 create questions based on settings and log

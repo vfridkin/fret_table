@@ -1,4 +1,13 @@
-# Get a vector of notes for a string
+#' Get a vector of notes for a string
+#' @param start_note first note letter on the string
+#' @param display string with form {name}_{accidental} - see examples
+#' @param fretcount number of frets
+#' @examples
+#' string_notes(display = "allplus_sharp")
+#' string_notes(display = "all_flat")
+#' string_notes(display = "e_natural")
+#' string_notes(display = "fret3_flat")
+#'
 string_notes <- function(start_note = "E",
                          display = "",
                          fret_count = k$fret_count) {
@@ -26,8 +35,20 @@ string_notes <- function(start_note = "E",
         map(~ next_note(start_note, .x)) %>%
         map_chr(fn, 1)
 
-    # Gaurd all2
-    if (note_filter$name == "all2") {
+    # Gaurd plus (naturals plus accidental)
+    if (note_filter$name == "allplus") {
+        return(notes)
+    }
+
+    # Guard specific fret
+    is_fret <- str_detect(note_filter$name, "fret")
+    if (is_fret) {
+        fret <- note_filter$name %>%
+            str_replace("fret", "") %>%
+            as.integer()
+        notes <- 0:fret_count %>% map_chr(
+            ~ iff(.x == fret, notes[.x + 1], "")
+        )
         return(notes)
     }
 
@@ -49,13 +70,6 @@ string_notes <- function(start_note = "E",
 
     notes
 }
-
-# 1] "all_sharp"
-# [1] "all_natural"
-# [1] "all_flat"
-# [1] "c_sharp"
-# [1] "c_natural"
-# [1] "d_flat"
 
 
 # Get the next note from a given note, using +, - for accidentals

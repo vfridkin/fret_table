@@ -57,7 +57,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         list(
           edgekey1 = "",
           all_sharp = "Sharps",
-          all2_sharp = "Nat+Sharps",
+          allplus_sharp = "Nat+Sharps",
           c_sharp = "C♯",
           d_sharp = "D♯",
           nokey2 = "",
@@ -91,7 +91,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         list(
           edgekey1 = "",
           all_flat = "Flats",
-          all2_flat = "Nat+Flats",
+          allplus_flat = "Nat+Flats",
           d_flat = "D♭",
           e_flat = "E♭",
           nokey2 = "",
@@ -132,7 +132,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
               is_nokey <- str_detect(name, "nokey")
               is_key <- str_detect(name, "sharp|natural|flat")
               is_all <- str_detect(name, "all")
-              is_2 <- str_detect(name, "2")
+              is_plus <- str_detect(name, "plus")
 
               if (is_edgekey) {
                 res <- colDef(minWidth = 10, maxWidth = 1000)
@@ -158,9 +158,9 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                 is_accidental <- str_detect(name, "sharp|flat")
 
                 background_index <- iff(is_accidental, "accidental", "natural")
-                background_index <- iff(is_2, "all", background_index)
+                background_index <- iff(is_plus, "all", background_index)
                 text_index <- iff(is_accidental, "natural", "accidental")
-                text_index <- iff(is_2, "accidental", text_index)
+                text_index <- iff(is_plus, "accidental", text_index)
 
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]
@@ -212,6 +212,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         {
           req(state$is_learning)
           state$letter_select <- input$letter_hover
+          state$input_source <- "letter"
         }
       )
 
@@ -220,6 +221,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         {
           req(state$is_playing)
           state$letter_select <- input$letter_click
+          state$input_source <- "letter"
         }
       )
     } # function
