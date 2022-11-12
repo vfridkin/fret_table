@@ -35,7 +35,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
       output$title_rt <- renderReactable({
         # Titles - in order to align with table
 
-        title <- iff(state$playing, "Playing...", "Learn")
+        title <- iff(state$is_playing, "Playing...", "Learn")
 
         list(
           edgekey1 = "",
@@ -148,7 +148,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
               }
               if (is_key) {
                 # Hide learn buttons when playing
-                is_visible <- any(!is_learn, !state$playing)
+                is_visible <- any(!is_learn, !state$is_playing)
                 visibility <- iff(is_visible, "visible", "hidden")
 
                 is_accidental <- str_detect(name, "sharp|flat")
@@ -158,6 +158,8 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
 
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]
+
+                click_input <- ns("learn_select")
 
                 res <- colDef(
                   cell = function(value, rowIndex, colName) {
@@ -171,9 +173,13 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                           "; --letter-text-colour: ", text_colour,
                           "; visibility: ", visibility
                         ),
-                        onclick = sprintf("", name)
+                        onclick =
+                          sprintf(
+                            'Shiny.setInputValue("%s", "%s", {priority: "event"})',
+                            click_input, colName
+                          )
                       ),
-                    )) # sprintf('alert("approve - %s")', name)
+                    ))
                   }
                 )
               }
@@ -182,6 +188,15 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           ) %>%
           set_names(names(notes))
       }
+
+      # Observe learn buttons --------------------------------------------------
+      observeEvent(
+        input$learn_select,
+        {
+          req(input$learn_select)
+          print(input$learn_select)
+        }
+      )
     } # function
   ) # moduleServer
 } # letters_server

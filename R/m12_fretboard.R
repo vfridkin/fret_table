@@ -81,20 +81,26 @@ get_col_def <- function(fret_count) {
 
   fret_names <- paste0("fret", 1:k$fret_count)
 
+  fret_min_width <- function(fret) {
+    round(50 * (1 - fret / 24))
+  }
+
   frets_coldef <- 1:k$fret_count %>%
     map(
-      ~ colDef(
-        name = "",
-        minWidth = 50,
-        html = TRUE,
-        align = "center",
-        class = "guitar-string",
-        style = function(value, index, name) {
-          paste0(
-            "position: relative; --thickness: ", k$string_thickness[index], "px;"
-          )
-        }
-      )
+      function(fret) {
+        colDef(
+          name = "",
+          minWidth = fret_min_width(fret),
+          html = TRUE,
+          align = "center",
+          class = "guitar-string",
+          style = function(value, index, name) {
+            paste0(
+              "position: relative; --thickness: ", k$string_thickness[index], "px;"
+            )
+          }
+        )
+      }
     ) %>%
     set_names(fret_names)
 

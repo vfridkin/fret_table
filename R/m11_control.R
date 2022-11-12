@@ -135,14 +135,14 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # > Play -----------------------------------------------------------------
       observeEvent(input$play_button, {
-        state$playing <- TRUE
+        state$is_playing <- TRUE
         state$play_seconds <- 0
         m$start_time <- Sys.time()
       })
 
       # > Stop -----------------------------------------------------------------
       observeEvent(input$stop_button, {
-        state$playing <- FALSE
+        state$is_playing <- FALSE
         state$play_seconds <- 0
       })
 
@@ -165,7 +165,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
       )
 
       play_duration <- reactive({
-        if (state$playing) {
+        if (state$is_playing) {
           invalidateLater(1000)
           state$play_seconds <- difftime(
             Sys.time(),

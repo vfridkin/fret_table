@@ -3,9 +3,21 @@ OK transport buttons change state
 OK state play activates timer
 OK state stop stops timer
 Show dots based on learn 
-show dots based on letter choice
+- all sharps
+- all naturals
+- all flats
+- all of a single note
+- one single note
 game settings -> state
 design game log dataframe
+
+ SELECTED: game | range | turns | PLAYING: start datetime | event datetime | turn | fret/letter | Question | Response | Accuracy  
+
 design questions from game settings
+- rules for selecting questions
+  - weighted on incorrect responses
+  - 
+
+
 create questions based on settings and log
  

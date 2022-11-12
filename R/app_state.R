@@ -1,5 +1,6 @@
 state <- reactiveValues(
-    playing = FALSE,
+    is_playing = FALSE,
     play_seconds = 0,
-    learn_select = ac$range[default == 1]$id
+    is_learning = FALSE,
+    learn_select = ""
 )

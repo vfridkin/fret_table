@@ -79,9 +79,12 @@ as_note_html <- function(note) {
     )
 
     glue("
+        <div class='dot-container'>
             <span class='dot' style ='{style}'>
               <span class='dot-text'>
                 {note_text}
               </span>
-            </span>")
+            </span>
+        </div>
+    ")
 }

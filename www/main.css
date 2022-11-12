@@ -109,7 +109,7 @@
   display: inline-block;
   z-index: 4;
   position: absolute;
-  left: 42%;
+  left: calc(50% - 7px);
   top: 26px;
 }
 
@@ -122,7 +122,7 @@
   display: inline-block;
   z-index: 4;
   position: absolute;
-  left: 42%;
+  left: calc(50% - 7px);
   top: -6px;
 }
 
@@ -174,8 +174,8 @@
   display: inline-block;
   z-index: 4;
   position: absolute;
-  left: 36%;
-  top: 1px;
+  left: calc(50% - 15px);
+  top: 0px;
   visibility: var(--dot-visible);
 }
 
