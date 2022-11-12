@@ -1,7 +1,8 @@
 state <- reactiveValues(
-    is_playing = FALSE,
-    play_seconds = 0,
     is_learning = FALSE,
+    is_playing = FALSE,
+    is_completed_game = FALSE,
+    play_seconds = 0,
     fret_select = NULL,
     letter_select = NULL
 )

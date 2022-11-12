@@ -173,12 +173,17 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                           "; --letter-text-colour: ", text_colour,
                           "; visibility: ", visibility
                         ),
-                        onmousedown =
+                        onmouseover =
                           sprintf(
                             'Shiny.setInputValue("%s", "%s", {priority: "event"})',
                             click_input, colName
                           ),
-                        onmouseup =
+                        # onmouseup =
+                        #   sprintf(
+                        #     'Shiny.setInputValue("%s", "%s", {priority: "event"})',
+                        #     click_input, ""
+                        #   ),
+                        onmouseout =
                           sprintf(
                             'Shiny.setInputValue("%s", "%s", {priority: "event"})',
                             click_input, ""
