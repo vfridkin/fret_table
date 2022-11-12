@@ -135,6 +135,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # > Play -----------------------------------------------------------------
       observeEvent(input$play_button, {
+        state$is_learning <- FALSE
         state$is_playing <- TRUE
         state$play_seconds <- 0
         m$start_time <- Sys.time()
@@ -142,6 +143,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # > Stop -----------------------------------------------------------------
       observeEvent(input$stop_button, {
+        state$is_learning <- TRUE
         state$is_playing <- FALSE
         state$play_seconds <- 0
       })

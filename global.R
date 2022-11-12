@@ -34,7 +34,6 @@ ac <- load_config()
 # Load files
 list.files("R", full.names = TRUE) %>% walk(source)
 
-
 # Remove scientific notation
 options(scipen = 999)
 options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")

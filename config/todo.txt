@@ -7,8 +7,10 @@ OK - all sharps
 OK - all naturals
 OK - all flats
 OK - all of a single note
-Show dots based on playing
 - one single note
+
+playing state....
+
 game settings -> state
 design game log dataframe
 

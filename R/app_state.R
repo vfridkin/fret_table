@@ -1,5 +1,5 @@
 state <- reactiveValues(
-    is_learning = FALSE,
+    is_learning = TRUE,
     is_playing = FALSE,
     is_completed_game = FALSE,
     play_seconds = 0,

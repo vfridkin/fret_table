@@ -62,7 +62,8 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         df <- fret_display()
         columns <- get_col_def(k$fret_count)
 
-        click_input <- ns("fret_select")
+        hover_input <- ns("fret_hover")
+        click_input <- ns("fret_click")
 
         reactable(
           df,
@@ -84,12 +85,27 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         )
       })
 
-      # Observe string select --------------------------------------------------
+      # Observe fret select --------------------------------------------------
       observeEvent(
-        input$fret_select,
+        input$fret_hover,
         {
-          req(input$fret_select)
-          state$fret_select <- input$fret_select
+          req(state$is_learning)
+          browser()
+          state$fret_select <- input$fret_hover
+        }
+      )
+
+      observeEvent(
+        input$fret_cell_hover,
+        {
+          req(state$is_learning)
+          cell_class <- input$fret_cell_hover
+          cell_coords <- cell_class %>%
+            strsplit(" ") %>%
+            pluck(1) %>%
+            tail(2)
+          print(cell_coords)
+          state$fret_select <- cell_coords
         }
       )
     } # function
@@ -127,7 +143,9 @@ get_col_def <- function(fret_count) {
           minWidth = fret_min_width(fret),
           html = TRUE,
           align = "center",
-          class = "guitar-string",
+          class = function(value, index, name) {
+            paste("guitar-string", index, name)
+          },
           style = function(value, index, name) {
             paste0(
               "position: relative; --thickness: ", k$string_thickness[index], "px;"

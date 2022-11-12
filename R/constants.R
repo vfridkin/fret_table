@@ -10,7 +10,8 @@ k <- tibble::lst(
         natural_lighter = "#ffffff",
         accidental = "#202020",
         accidental_darker = "#1a1a1a",
-        accidental_lighter = "#282828"
+        accidental_lighter = "#282828",
+        all = "#bdbdbd"
     ),
     notes = c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B"),
     string_count = 6,

@@ -57,7 +57,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         list(
           edgekey1 = "",
           all_sharp = "Sharps",
-          nokey1 = "",
+          all2_sharp = "Nat+Sharps",
           c_sharp = "C♯",
           d_sharp = "D♯",
           nokey2 = "",
@@ -91,7 +91,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         list(
           edgekey1 = "",
           all_flat = "Flats",
-          nokey1 = "",
+          all2_flat = "Nat+Flats",
           d_flat = "D♭",
           e_flat = "E♭",
           nokey2 = "",
@@ -131,13 +131,17 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
               is_halfkey <- str_detect(name, "halfkey")
               is_nokey <- str_detect(name, "nokey")
               is_key <- str_detect(name, "sharp|natural|flat")
-              is_learn <- str_detect(name, "learn")
+              is_all <- str_detect(name, "all")
+              is_2 <- str_detect(name, "2")
 
               if (is_edgekey) {
                 res <- colDef(minWidth = 10, maxWidth = 1000)
               }
               if (is_halfkey) {
-                res <- colDef(minWidth = 35, maxWidth = 60)
+                res <- colDef(
+                  minWidth = 35,
+                  maxWidth = 60
+                )
               }
               if (is_nokey) {
                 res <- colDef(
@@ -147,19 +151,22 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                 )
               }
               if (is_key) {
-                # Hide learn buttons when playing
-                is_visible <- any(!is_learn, !state$is_playing)
+                # Hide 'all_' buttons when playing
+                is_visible <- any(!is_all, !state$is_playing)
                 visibility <- iff(is_visible, "visible", "hidden")
 
                 is_accidental <- str_detect(name, "sharp|flat")
 
                 background_index <- iff(is_accidental, "accidental", "natural")
+                background_index <- iff(is_2, "all", background_index)
                 text_index <- iff(is_accidental, "natural", "accidental")
+                text_index <- iff(is_2, "accidental", text_index)
 
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]
 
-                click_input <- ns("letter_select")
+                hover_input <- ns("letter_hover")
+                click_input <- ns("letter_click")
 
                 res <- colDef(
                   cell = function(value, rowIndex, colName) {
@@ -176,14 +183,14 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                         onmouseover =
                           sprintf(
                             'Shiny.setInputValue("%s", "%s", {priority: "event"})',
-                            click_input, colName
+                            hover_input, colName
                           ),
-                        # onmouseup =
-                        #   sprintf(
-                        #     'Shiny.setInputValue("%s", "%s", {priority: "event"})',
-                        #     click_input, ""
-                        #   ),
                         onmouseout =
+                          sprintf(
+                            'Shiny.setInputValue("%s", "%s", {priority: "event"})',
+                            hover_input, ""
+                          ),
+                        onclick =
                           sprintf(
                             'Shiny.setInputValue("%s", "%s", {priority: "event"})',
                             click_input, ""
@@ -199,11 +206,20 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           set_names(names(notes))
       }
 
-      # Observe learn buttons --------------------------------------------------
+      # Observe letter buttons -------------------------------------------------
       observeEvent(
-        input$letter_select,
+        input$letter_hover,
         {
-          state$letter_select <- input$letter_select
+          req(state$is_learning)
+          state$letter_select <- input$letter_hover
+        }
+      )
+
+      observeEvent(
+        input$letter_click,
+        {
+          req(state$is_playing)
+          state$letter_select <- input$letter_click
         }
       )
     } # function

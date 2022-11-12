@@ -34,8 +34,8 @@
 
 fluidPage(
   # CSS and JS files - for animation, styling and custom interactions
-  load_styles()
-  # , includeScript("www/script.js")
+  load_styles(),
+  includeScript("www/script.js")
   # Tour dependency
   , introjsUI()
   # Main

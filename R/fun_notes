@@ -18,12 +18,18 @@ string_notes <- function(start_note = "E",
         as.list()
 
     # Show sharps by default
-    fn <- iff(note_filter$accidental == "flat", tail, head)
+    is_flat <- note_filter$accidental == "flat"
+    fn <- iff(is_flat, tail, head)
 
     # Get all notes
     notes <- 0:fret_count %>%
         map(~ next_note(start_note, .x)) %>%
         map_chr(fn, 1)
+
+    # Gaurd all2
+    if (note_filter$name == "all2") {
+        return(notes)
+    }
 
     # Apply note filter to naturals vs accidentals
     char_count <- iff(note_filter$accidental == "natural", 1, 2)
