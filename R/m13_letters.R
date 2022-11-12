@@ -56,7 +56,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         # C♯ -> A♯
         list(
           edgekey1 = "",
-          learn_sharp = "Sharps",
+          all_sharp = "Sharps",
           nokey1 = "",
           c_sharp = "C♯",
           d_sharp = "D♯",
@@ -73,7 +73,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         # C -> B
         list(
           edgekey1 = "",
-          learn_natural = "Naturals",
+          all_natural = "Naturals",
           halfkey1 = "",
           c_natural = "C",
           d_natural = "D",
@@ -90,7 +90,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         # D♭ -> B♭
         list(
           edgekey1 = "",
-          learn_flat = "Flats",
+          all_flat = "Flats",
           nokey1 = "",
           d_flat = "D♭",
           e_flat = "E♭",
@@ -159,7 +159,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]
 
-                click_input <- ns("learn_select")
+                click_input <- ns("letter_select")
 
                 res <- colDef(
                   cell = function(value, rowIndex, colName) {
@@ -173,10 +173,15 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                           "; --letter-text-colour: ", text_colour,
                           "; visibility: ", visibility
                         ),
-                        onclick =
+                        onmousedown =
                           sprintf(
                             'Shiny.setInputValue("%s", "%s", {priority: "event"})',
                             click_input, colName
+                          ),
+                        onmouseup =
+                          sprintf(
+                            'Shiny.setInputValue("%s", "%s", {priority: "event"})',
+                            click_input, ""
                           )
                       ),
                     ))
@@ -191,10 +196,9 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # Observe learn buttons --------------------------------------------------
       observeEvent(
-        input$learn_select,
+        input$letter_select,
         {
-          req(input$learn_select)
-          print(input$learn_select)
+          state$letter_select <- input$letter_select
         }
       )
     } # function

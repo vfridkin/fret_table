@@ -1,12 +1,56 @@
 # Get a vector of notes for a string
 string_notes <- function(start_note = "E",
-                         accidental = "sharp",
+                         display = "",
                          fret_count = k$fret_count) {
-    fn <- iff(accidental == "sharp", head, tail)
-    0:fret_count %>%
+    # Guard nothing to display
+    nothing_to_display <- any(
+        is.null(display), display == ""
+    )
+    if (nothing_to_display) {
+        return(rep("", fret_count + 1))
+    }
+
+    # Get all notes for string
+    note_filter <- display %>%
+        strsplit(display, split = "_") %>%
+        pluck(1) %>%
+        set_names(c("name", "accidental")) %>%
+        as.list()
+
+    # Show sharps by default
+    fn <- iff(note_filter$accidental == "flat", tail, head)
+
+    # Get all notes
+    notes <- 0:fret_count %>%
         map(~ next_note(start_note, .x)) %>%
         map_chr(fn, 1)
+
+    # Apply note filter to naturals vs accidentals
+    char_count <- iff(note_filter$accidental == "natural", 1, 2)
+
+    notes <- notes %>% map_chr(
+        ~ iff(nchar(.x) == char_count, .x, "")
+    )
+
+    # Guard all
+    if (note_filter$name == "all") {
+        return(notes)
+    }
+
+    notes <- notes %>% map_chr(
+        ~ iff(tolower(substr(.x, 1, 1)) == tolower(note_filter$name), .x, "")
+    )
+
+    notes
 }
+
+# 1] "all_sharp"
+# [1] "all_natural"
+# [1] "all_flat"
+# [1] "c_sharp"
+# [1] "c_natural"
+# [1] "d_flat"
+
 
 # Get the next note from a given note, using +, - for accidentals
 next_note <- function(note = "E", interval = 1) {
@@ -56,6 +100,11 @@ as_note_html <- function(note) {
         accidental = substr(note, 2, 2)
     )
 
+    # Guard empty notes
+    if (this_note$name == "") {
+        return("")
+    }
+
     is_accidental <- this_note$accidental != ""
     note_text <- note %>% as_note_text()
 
@@ -88,3 +137,5 @@ as_note_html <- function(note) {
         </div>
     ")
 }
+
+as_note_html_v <- Vectorize(as_note_html)

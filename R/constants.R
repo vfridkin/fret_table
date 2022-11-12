@@ -1,4 +1,4 @@
-k <- list(
+k <- tibble::lst(
     colour = list(
         button_text = "#f5ebe0",
         button_play = "#06d6a0",
@@ -15,6 +15,7 @@ k <- list(
     notes = c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B"),
     string_count = 6,
     fret_count = 12,
+    fret_names <- paste0("fret", 0:fret_count),
     open_notes = c("E", "A", "D", "G", "B", "E") %>% rev(),
     string_thickness = c(1, 1, 2, 2, 3, 4),
     string_rotation = c(0, 1, 2, -2, -1, 0)

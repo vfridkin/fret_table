@@ -1,3 +1,6 @@
+# Fretboard has a headstock and at least 12 frets
+# Headstock is fret0
+
 fretboard_ui <- function(id) {
   ns <- NS(id)
 
@@ -19,40 +22,47 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         run_once = TRUE
       )
 
+      # fret table raw
+      fret_data <- eventReactive(
+        list(
+          state$letter_select
+        ),
+        {
+          display <- state$letter_select
+
+          df <- k$open_notes %>%
+            map(
+              function(open_note) {
+                string_notes(open_note, display)
+              }
+            ) %>%
+            as.data.table() %>%
+            t() %>%
+            as.data.table() %>%
+            set_names(k$fret_names)
+
+          df
+        }
+      )
+
+      # fret table with formatting
+      fret_display <- eventReactive(
+        fret_data(),
+        {
+          df <- fret_data()
+          cols <- k$fret_names
+          df <- df[, (cols) := lapply(.SD, as_note_html_v), .SDcols = cols]
+          df <- df %>% add_fret_markers()
+          df
+        }
+      )
+
+
       output$fretboard_rt <- renderReactable({
-        # Fretboard has a headstock and at least 12 frets
-        # Headstock is fret0
-
-        learn_select <- state$learn_select
-
-        accidental <- iff("flat" %in% learn_select, "flat", "sharp")
-        fret_names <- paste0("fret", 0:k$fret_count)
-
-        df <- k$open_notes %>%
-          map(
-            function(open_note) {
-              string_notes(open_note, accidental) %>%
-                map_chr(as_note_html)
-            }
-          ) %>%
-          as.data.table() %>%
-          t() %>%
-          as.data.table() %>%
-          set_names(fret_names)
-
-        # Add fret markers
-        cols <- paste0("fret", c(3, 5, 7, 9))
-        fn <- function(x) paste0("<span class='fret-marker'></span>", x)
-        fn2 <- function(x) paste0("<span class='fret-marker2'></span>", x)
-
-        df[3, (cols) := lapply(.SD, fn), .SDcols = cols]
-        df[c(2, 4), fret12 := fn(fret12)]
-        df[4, (cols) := lapply(.SD, fn2), .SDcols = cols]
-        df[c(3, 5), fret12 := fn2(fret12)]
-
+        df <- fret_display()
         columns <- get_col_def(k$fret_count)
 
-        click_input <- ns("string_select")
+        click_input <- ns("fret_select")
 
         reactable(
           df,
@@ -76,10 +86,10 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # Observe string select --------------------------------------------------
       observeEvent(
-        input$string_select,
+        input$fret_select,
         {
-          req(input$string_select)
-          print(input$string_select)
+          req(input$fret_select)
+          state$fret_select <- input$fret_select
         }
       )
     } # function

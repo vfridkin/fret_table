@@ -2,11 +2,12 @@ OK change learn from selectize to buttons with same rules
 OK transport buttons change state
 OK state play activates timer
 OK state stop stops timer
-Show dots based on learn 
-- all sharps
-- all naturals
-- all flats
-- all of a single note
+OK Show dots based on learn 
+OK - all sharps
+OK - all naturals
+OK - all flats
+OK - all of a single note
+Show dots based on playing
 - one single note
 game settings -> state
 design game log dataframe
