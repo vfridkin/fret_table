@@ -52,16 +52,40 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
         columns <- get_col_def(k$fret_count)
 
+        click_input <- ns("string_select")
+
         reactable(
           df,
           columns = columns,
           sortable = FALSE,
-          defaultColDef = colDef(headerClass = "score-header", html = TRUE, minWidth = 50, align = "center")
+          defaultColDef = colDef(
+            headerClass = "score-header",
+            html = TRUE,
+            minWidth = 50,
+            align = "center"
+          ),
+          onClick = JS(paste0("function(rowInfo, column) {
+              if (window.Shiny) {
+                console.log(rowInfo);
+                console.log(column);
+                Shiny.setInputValue('", click_input, "', {row: rowInfo.index + 1, col: column.id}, { priority: 'event' })
+              }
+            }"))
         )
       })
+
+      # Observe string select --------------------------------------------------
+      observeEvent(
+        input$string_select,
+        {
+          req(input$string_select)
+          print(input$string_select)
+        }
+      )
     } # function
   ) # moduleServer
 } # fretboard_server
+
 
 get_col_def <- function(fret_count) {
   headstock_coldef <- list(
