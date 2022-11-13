@@ -11,8 +11,8 @@ OK - one single note
 playing state....
 
 OK - init score
-create question when play button pressed
-
+OK - create questions
+OK - create questions on start new game
 
 game settings -> state
 design game log dataframe

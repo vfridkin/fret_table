@@ -162,7 +162,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       observeEvent(
         input$turns_select,
-        m$turns_select <- input$turns_select
+        m$turns_select <- input$turns_select %>% as.integer()
       )
 
       play_duration <- reactive({
@@ -184,25 +184,25 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         sprintf("%02d:%02d", minutes, seconds)
       })
 
-      questions <- reactive({
-        # | turn | question_type | ask |
+      questions <- eventReactive(
+        list(
+          state$is_playing,
+          m$start_time
+        ),
+        {
+          req(state$is_playing)
+          game <- m$game_select
+          range <- m$range_select
+          turns <- m$turns_select
 
-        browser()
-        game <- m$game_select
-        range <- m$range_select
-        turns <- m$turns_select
+          get_questions(game, range, turns)
+        }
+      )
 
-        question_types <- sample(game, turns, replace = TRUE)
-        asks <- get_asks(question_types, range)
-
-        df <- data.table(
-          turn = 1:m$turns_select,
-          question_type = question_types,
-          ask = asks
-        )
+      observe({
+        print(questions())
       })
 
-      observe(questions())
 
       score <- reactive({
         # Initialise data to have an empty score
