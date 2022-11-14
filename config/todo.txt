@@ -14,6 +14,11 @@ OK - init score
 OK - create questions
 OK - create questions on start new game
 
+
+save question and response in log 
+show fret or letters depending on question and response
+
+
 game settings -> state
 design game log dataframe
 

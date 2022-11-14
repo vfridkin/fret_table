@@ -193,7 +193,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                         onclick =
                           sprintf(
                             'Shiny.setInputValue("%s", "%s", {priority: "event"})',
-                            click_input, ""
+                            click_input, colName
                           )
                       ),
                     ))

@@ -138,6 +138,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         state$is_learning <- FALSE
         state$is_playing <- TRUE
         state$play_seconds <- 0
+        state$play_turn <- 1
         m$start_time <- Sys.time()
       })
 
@@ -146,6 +147,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         state$is_learning <- TRUE
         state$is_playing <- FALSE
         state$play_seconds <- 0
+        state$play_turn <- 0
       })
 
 
@@ -165,6 +167,8 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         m$turns_select <- input$turns_select %>% as.integer()
       )
 
+
+      # Game timer -------------------------------------------------------------
       play_duration <- reactive({
         if (state$is_playing) {
           invalidateLater(1000)
@@ -184,6 +188,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         sprintf("%02d:%02d", minutes, seconds)
       })
 
+      # Game questions ---------------------------------------------------------
       questions <- eventReactive(
         list(
           state$is_playing,
@@ -199,11 +204,34 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         }
       )
 
-      observe({
-        print(questions())
-      })
+      # Game turn --------------------------------------------------------------
+
+      observeEvent(
+        state$play_turn,
+        {
+          req(state$is_playing)
+
+          turn <- state$play_turn
+          req(turn > 0)
+
+          state$question <- questions()[turn]
+        }
+      )
+
+      observeEvent(
+        list(
+          state$fret_select,
+          state$letter_select
+        ),
+        {
+          req(state$is_playing)
+          source <- state$input_source
+          browser()
+        }
+      )
 
 
+      # Game score -------------------------------------------------------------
       score <- reactive({
         # Initialise data to have an empty score
         df <- data.table(s1 = "")
@@ -211,7 +239,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
         for (turn in 1:m$turns_select) {
           col <- col_names[turn]
-          valid_turn <- turn <= state$play_turn
+          valid_turn <- turn < state$play_turn
           df[[col]] <- iff(valid_turn, answer_html[["FALSE"]], "")
         }
 

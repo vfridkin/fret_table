@@ -71,8 +71,26 @@ string_notes <- function(start_note = "E",
     notes
 }
 
+#' Get a vector of notes for a string with accidentals joined by pipe '|'
+#' @param start_note first note letter on the string
+#' @param fretcount number of frets
+string_notes_with_joined_accidentals <- function(start_note = "E",
+                                                 fret_count = k$fret_count) {
+    # Get all notes
+    notes <- 0:fret_count %>%
+        map(~ next_note(start_note, .x)) %>%
+        map_chr(~ paste(.x, collapse = "|"))
 
-# Get the next note from a given note, using +, - for accidentals
+
+    notes
+}
+
+
+#' Get the next note from a given note, using p, q for accidentals
+#' p: flat
+#' q: sharp
+#' @param note starting note
+#' @param interval to next note
 next_note <- function(note = "E", interval = 1) {
     if (interval == 0) {
         return(note)
@@ -89,7 +107,7 @@ next_note <- function(note = "E", interval = 1) {
 
     has_accidental <- this_note$accidental != ""
     if (has_accidental) {
-        delta_position <- iff(this_note$accidental == "+", 1, -1)
+        delta_position <- iff(this_note$accidental == "q", 1, -1)
         note_position <- note_position + delta_position
     }
 
@@ -100,8 +118,8 @@ next_note <- function(note = "E", interval = 1) {
     # If new note is 'x' then return sharp and flat form
     if (new_note == "x") {
         new_note <- c(
-            paste0(notes[next_position - 1], "+"),
-            paste0(notes[next_position + 1], "-")
+            paste0(notes[next_position - 1], "q"),
+            paste0(notes[next_position + 1], "p")
         )
     }
 
@@ -110,23 +128,51 @@ next_note <- function(note = "E", interval = 1) {
 
 as_note_text <- function(note) {
     note %>%
-        str_replace("\\+", "♯") %>%
-        str_replace("\\-", "♭")
+        str_replace("q", "♯") %>%
+        str_replace("p", "♭")
 }
 
 as_note_html <- function(note) {
-    this_note <- list(
-        name = substr(note, 1, 1),
-        accidental = substr(note, 2, 2)
-    )
-
     # Guard empty notes
-    if (this_note$name == "") {
+    if (note == "") {
         return("")
     }
 
-    is_accidental <- this_note$accidental != ""
-    note_text <- note %>% as_note_text()
+    is_accidental <- note %>% str_detect("|")
+
+    # Span to contain note name and classes
+    note_span <- ""
+
+    if (is_accidental) {
+        notes <- note %>%
+            as_note_text() %>%
+            strsplit("\\|") %>%
+            pluck(1)
+        note_class <- notes %>%
+            map_chr(~ substr(.x, 1, 1)) %>%
+            tolower() %>%
+            paste0("-note")
+        note_span <- glue("
+            <span class='sharp {note_class[1]}'>
+                {notes[1]}
+            </span>
+            <span class='flat {note_class[2]}'>
+                {notes[2]}
+            </span>
+            ")
+    }
+
+    if (!is_accidental) {
+        note_class <- note %>%
+            tolower() %>%
+            paste0("-note")
+        note_span <- glue("
+            <span class='natural {note_class}'>
+                {note}
+            </span>
+            ")
+    }
+
 
     fn <- function(is_accidental_colour, is_not_accidental_colour) {
         iff(
@@ -151,7 +197,7 @@ as_note_html <- function(note) {
         <div class='dot-container'>
             <span class='dot' style ='{style}'>
               <span class='dot-text'>
-                {note_text}
+                {note_span}
               </span>
             </span>
         </div>

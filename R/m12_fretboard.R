@@ -23,56 +23,37 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       )
 
       # fret table without html formatting
-      fret_data <- eventReactive(
-        list(
-          state$letter_select,
-          state$fret_select
-        ),
-        {
-          note_count <- length(k$open_notes)
-          source <- state$input_source %>% if_null_then("letter")
+      fret_data <- {
+        note_count <- length(k$open_notes)
+        rows <- 1:note_count
 
-          this <- iff(
-            source == "letter",
-            list(
-              rows = 1:note_count,
-              display = state$letter_select
-            ),
-            display_from_fret(state$fret_select)
-          )
+        df <- rows %>%
+          map(
+            function(row) {
+              open_note <- k$open_notes[row]
+              string_notes_with_joined_accidentals(open_note)
+            }
+          ) %>%
+          as.data.table() %>%
+          t() %>%
+          as.data.table() %>%
+          set_names(k$fret_names)
 
-          df <- 1:note_count %>%
-            map(
-              function(row) {
-                open_note <- k$open_notes[row]
-                display <- iff(row %in% this$rows, this$display, "")
-                string_notes(open_note, display)
-              }
-            ) %>%
-            as.data.table() %>%
-            t() %>%
-            as.data.table() %>%
-            set_names(k$fret_names)
-
-          df
-        }
-      )
+        df
+      }
 
       # fret table with formatting
-      fret_display <- eventReactive(
-        fret_data(),
-        {
-          df <- fret_data()
-          cols <- k$fret_names
-          df <- df[, (cols) := lapply(.SD, as_note_html_v), .SDcols = cols]
-          df <- df %>% add_fret_markers()
-          df
-        }
-      )
+      fret_html <- {
+        df <- fret_data
+        cols <- k$fret_names
+        df <- df[, (cols) := lapply(.SD, as_note_html_v), .SDcols = cols]
+        df <- df %>% add_fret_markers()
+        df
+      }
 
 
       output$fretboard_rt <- renderReactable({
-        df <- fret_display()
+        df <- fret_html
         columns <- get_fret_col_def(k$fret_count)
 
         # Hover is handled by script.js
