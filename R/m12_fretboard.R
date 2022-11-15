@@ -8,7 +8,15 @@ fretboard_ui <- function(id) {
     fluidRow(
       style = "margin-top: 30px;",
       reactableOutput(ns("fretboard_rt"))
-    ) # Row
+    ), # Row
+    fluidRow(
+      column(
+        style = "margin-top: 3px; height: 5px; z-index: 10;",
+        width = 12,
+        align = "right",
+        uiOutput(ns("default_accidental_ui"))
+      )
+    )
   ) # tagList
 }
 
@@ -19,7 +27,16 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       ns <- session$ns
 
       m <- reactiveValues(
-        run_once = TRUE
+        run_once = FALSE,
+        default_accidental = NULL
+      )
+
+      observeEvent(
+        m$run_once,
+        {
+          m$default_accidental <- "sharp"
+        },
+        once = TRUE
       )
 
       # fret table without html formatting
@@ -69,14 +86,36 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
             minWidth = 50,
             align = "center"
           ),
-          onClick = JS(paste0("function(rowInfo, column) {
+          onClick = JS(paste0(
+            "function(rowInfo, column) {
               if (window.Shiny) {
                 console.log(rowInfo);
                 console.log(column);
-                Shiny.setInputValue('", click_input, "', {row: rowInfo.index + 1, col: column.id}, { priority: 'event' })
+                Shiny.setInputValue('",
+            click_input,
+            "', {row: rowInfo.index + 1, col: column.id},
+              {priority: 'event' })
               }
-            }"))
+            }"
+          ))
         )
+      })
+
+      output$default_accidental_ui <- renderUI({
+        if (state$is_learning) {
+          radioGroupButtons(
+            inputId = ns("default_accidental"),
+            label = NULL,
+            choices = k$default_accidental_choices,
+            selected = m$default_accidental
+          )
+        } else {
+          NULL
+        }
+      })
+
+      observeEvent(input$default_accidental, {
+        m$default_accidental <- input$default_accidental
       })
 
       # Observe fret select --------------------------------------------------
@@ -98,11 +137,37 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
             strsplit(" ") %>%
             pluck(1) %>%
             tail(2) %>%
-            set_names(c("row", "col")) %>%
+            set_names(c("string", "fret")) %>%
             as.list()
-          cell_coords$row %<>% as.integer()
           state$fret_select <- cell_coords
           state$input_source <- "fret"
+        }
+      )
+
+      # Respond to letters -----------------------------------------------------
+      observeEvent(
+        state$letter_select,
+        {
+          if (state$is_learning) {
+            fret_visible_from_letter(
+              session,
+              state$letter_select
+            )
+          }
+        }
+      )
+
+      # Respond to fret cells --------------------------------------------------
+      observeEvent(
+        state$fret_select,
+        {
+          if (state$is_learning) {
+            fret_visible_from_fretboard(
+              session,
+              state$fret_select,
+              m$default_accidental
+            )
+          }
         }
       )
     } # function

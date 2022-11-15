@@ -138,7 +138,7 @@ as_note_html <- function(note) {
         return("")
     }
 
-    is_accidental <- note %>% str_detect("|")
+    is_accidental <- note %>% str_detect("\\|")
 
     # Span to contain note name and classes
     note_span <- ""
@@ -189,7 +189,6 @@ as_note_html <- function(note) {
         "--gradient: ", gradient_colour, ";
             --gradient-edge: ", gradient_edge_colour, ";
             --dot-text: ", dot_text_colour, ";
-            --dot-visible: visible;
             "
     )
 

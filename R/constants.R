@@ -11,9 +11,10 @@ k <- tibble::lst(
     accidental = "#202020",
     accidental_darker = "#1a1a1a",
     accidental_lighter = "#282828",
-    all = "#bdbdbd"
+    all = "#8B8984"
   ),
   notes = c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B"),
+  default_accidental_choices = set_names(c("sharp", "flat"), c("♯", "♭")),
   string_count = 6,
   fret_count = 12,
   fret_names = paste0("fret", 0:fret_count),

@@ -14,7 +14,7 @@ letters_ui <- function(id) {
 
   div(
     id = ns("piano"),
-    style = "margin-top: 7px; width: 100vw; padding: 1vw;",
+    style = "margin-top: 0px; width: 100vw; padding: 1vw;",
     in_row(reactableOutput(ns("title_rt")), width),
     in_row(reactableOutput(ns("sharps_rt")), width),
     in_row(reactableOutput(ns("naturals_rt")), width),
@@ -39,6 +39,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
 
         list(
           edgekey1 = "",
+          halfkey1 = "",
           nokey1 = title,
           nokey2 = "",
           nokey3 = "",
@@ -47,7 +48,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           nokey6 = "",
           nokey7 = "",
           nokey8 = "",
-          halfkey1 = "",
+          halfkey2 = "",
           edgekey2 = ""
         ) %>% to_reactable()
       })
@@ -56,15 +57,16 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         # C♯ -> A♯
         list(
           edgekey1 = "",
+          allplus_sharp = "All(♯)",
           all_sharp = "Sharps",
-          allplus_sharp = "Nat+Sharps",
+          halfkey1 = "",
           c_sharp = "C♯",
           d_sharp = "D♯",
           nokey2 = "",
           f_sharp = "F♯",
           g_sharp = "G♯",
           a_sharp = "A♯",
-          halfkey1 = "",
+          halfkey2 = "",
           edgekey2 = ""
         ) %>% to_reactable()
       })
@@ -73,8 +75,9 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         # C -> B
         list(
           edgekey1 = "",
-          all_natural = "Naturals",
           halfkey1 = "",
+          all_natural = "Naturals",
+          halfkey2 = "",
           c_natural = "C",
           d_natural = "D",
           e_natural = "E",
@@ -90,15 +93,16 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         # D♭ -> B♭
         list(
           edgekey1 = "",
+          allplus_flat = "All(♭)",
           all_flat = "Flats",
-          allplus_flat = "Nat+Flats",
+          halfkey1 = "",
           d_flat = "D♭",
           e_flat = "E♭",
           nokey2 = "",
           g_flat = "G♭",
           a_flat = "A♭",
           b_flat = "B♭",
-          halfkey1 = "",
+          halfkey2 = "",
           edgekey2 = ""
         ) %>% to_reactable()
       })
@@ -135,7 +139,8 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
               is_plus <- str_detect(name, "plus")
 
               if (is_edgekey) {
-                res <- colDef(minWidth = 10, maxWidth = 1000)
+                min_width <- iff(name == "edgekey1", 10, 15)
+                res <- colDef(minWidth = min_width, maxWidth = 1000)
               }
               if (is_halfkey) {
                 res <- colDef(
@@ -160,7 +165,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                 background_index <- iff(is_accidental, "accidental", "natural")
                 background_index <- iff(is_plus, "all", background_index)
                 text_index <- iff(is_accidental, "natural", "accidental")
-                text_index <- iff(is_plus, "accidental", text_index)
+                # text_index <- iff(is_plus, "accidental", text_index)
 
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]

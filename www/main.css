@@ -176,11 +176,16 @@
   position: absolute;
   left: calc(50% - 15px);
   top: 0px;
-  visibility: var(--dot-visible);
+  display: none;
 }
 
 .dot-text {
   position: relative;
   top: 15%;
   font-weight: 600;
+  display: none;
+}
+
+.natural, .sharp, .flat {
+  display: none;
 }
