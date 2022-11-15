@@ -65,5 +65,22 @@ Shiny.addCustomMessageHandler(
     input.visible ? $(natural).show() : $(natural).hide();
     input.visible ? $(accidental).show() : $(accidental).hide();
     $(accidental).siblings().hide();
+
+    if (input.role != "display") {
+      $(dot).css("background", input.dot_colour);
+    }
+
+    if (input.inject_text != "") {
+      $(".question-note").remove();
+      $(dot_text).append(
+        `<span class="question-note">${input.inject_text}<span>`
+      );
+      $(".question-note").siblings().hide();
+    }
   }
 );
+
+Shiny.addCustomMessageHandler("clear_questions", function (input) {
+  $(".question-note").remove();
+  $(".dot").css("background", "");
+});

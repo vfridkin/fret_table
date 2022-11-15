@@ -167,7 +167,6 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         m$turns_select <- input$turns_select %>% as.integer()
       )
 
-
       # Game timer -------------------------------------------------------------
       play_duration <- reactive({
         if (state$is_playing) {
@@ -226,10 +225,40 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         {
           req(state$is_playing)
           source <- state$input_source
-          browser()
+          question <- state$question
+          question_source <- strsplit(question$type, "_") %>% pluck(1, 2)
+
+          valid_source <- source == question_source
+          if (!valid_source) {
+            return()
+          }
+
+          if (source == "letter") {
+            response <- state$letter_select %>% letter_to_note()
+            log_row <- get_log_row(
+              question,
+              response,
+              source,
+              m$start_time,
+              state$play_seconds
+            )
+          }
+
+
+          state$play_turn <- state$play_turn + 1
         }
       )
 
+      letter_to_note <- function(letter) {
+        split <- strsplit(letter, "_") %>% pluck(1)
+        accidental <- split[2] %>%
+          str_replace("flat", "p") %>%
+          str_replace("sharp", "q") %>%
+          str_replace("natural", "")
+
+        note_name <- toupper(split[1])
+        paste0(note_name, accidental)
+      }
 
       # Game score -------------------------------------------------------------
       score <- reactive({

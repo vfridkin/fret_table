@@ -118,16 +118,19 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         m$default_accidental <- input$default_accidental
       })
 
-      # Observe fret select --------------------------------------------------
+      ## LEARNING --------------------------------------------------------------
+      # > Clean up after playing -----------------------------------------------
       observeEvent(
-        input$fret_click,
+        state$is_learning,
         {
-          req(state$is_playing)
-          state$fret_select <- input$fret_click
-          state$input_source <- "fret"
+          if (state$is_learning) {
+            dot_visibility(session, FALSE)
+            clear_question_notes(session)
+          }
         }
       )
 
+      # > Observe fret ---------------------------------------------------------
       observeEvent(
         input$fret_cell_hover,
         {
@@ -144,7 +147,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         }
       )
 
-      # Respond to letters -----------------------------------------------------
+      # > Display fret cells ---------------------------------------------------
       observeEvent(
         state$letter_select,
         {
@@ -157,7 +160,6 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         }
       )
 
-      # Respond to fret cells --------------------------------------------------
       observeEvent(
         state$fret_select,
         {
@@ -166,6 +168,42 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
               session,
               state$fret_select,
               m$default_accidental
+            )
+          }
+        }
+      )
+
+      ## PLAYING ---------------------------------------------------------------
+      # > Observe fret ---------------------------------------------------------
+      observeEvent(
+        input$fret_click,
+        {
+          req(state$is_playing)
+          state$fret_select <- input$fret_click
+          state$input_source <- "fret"
+        }
+      )
+
+      # > Display question -----------------------------------------------------
+      observeEvent(
+        state$question,
+        {
+          if (state$is_playing) {
+            question <- state$question
+
+            # Display on fret when player has to choose the matching note letter
+            req(question$type == "note_letter")
+
+            fret_select <- list(
+              string = paste0("string", question$row),
+              fret = question$fret
+            )
+
+            fret_visible_from_fretboard(
+              session,
+              fret_select,
+              m$default_accidental,
+              role = "question"
             )
           }
         }

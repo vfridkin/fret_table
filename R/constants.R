@@ -11,7 +11,11 @@ k <- tibble::lst(
     accidental = "#202020",
     accidental_darker = "#1a1a1a",
     accidental_lighter = "#282828",
-    all = "#8B8984"
+    all = "#8B8984",
+    display = "#8B8984",
+    question = "#ffd166",
+    right = "#06d6a0",
+    wrong = "#ef476f"
   ),
   notes = c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B"),
   default_accidental_choices = set_names(c("sharp", "flat"), c("♯", "♭")),

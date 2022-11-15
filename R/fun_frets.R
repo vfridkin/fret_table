@@ -99,19 +99,32 @@ note_visibility <- function(session,
                             visible,
                             string = "",
                             fret = "",
-                            accidental = "sharp") {
+                            accidental = "sharp",
+                            role = "display") {
     string_class <- iff(string == "", "", paste0(".", string))
     fret_class <- iff(fret == "", "", paste0(".", fret))
 
     coord_class <- paste0(string_class, fret_class)
+    dot_colour <- k$colour[[role]]
+    inject_text <- iff(role == "question", "?", "")
 
     session$sendCustomMessage(
         "note_visibility_by_coordinate",
         list(
             visible = visible,
             coord = coord_class,
-            accidental = accidental
+            accidental = accidental,
+            role = role,
+            dot_colour = dot_colour,
+            inject_text = inject_text
         )
+    )
+}
+
+#' Remove all question notes - do this after each game
+clear_question_notes <- function(session) {
+    session$sendCustomMessage(
+        "clear_questions", ""
     )
 }
 
@@ -199,7 +212,19 @@ fret_visible_from_letter <- function(session, display) {
     )
 }
 
-fret_visible_from_fretboard <- function(session, display, accidental) {
+
+#' Show note on fret from string/fret selection
+#' @param display string and fret coordinates
+#' @param accidental sharp or flat (if natural at coord then ignored)
+#' @param role one of: display (default), question, right, wrong
+#' When learning, role = display
+#' When playing, role = question (hides the note text), then right/wrong
+#' depending on the answer
+#' @return side effect - note shows on fretboard
+fret_visible_from_fretboard <- function(session,
+                                        display,
+                                        accidental,
+                                        role = "display") {
     # Hide all dots by default
     dot_visibility(session, FALSE)
 
@@ -221,6 +246,7 @@ fret_visible_from_fretboard <- function(session, display, accidental) {
         TRUE,
         string = display$string,
         fret = display$fret,
-        accidental = accidental
+        accidental = accidental,
+        role = role
     )
 }
