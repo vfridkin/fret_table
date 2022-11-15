@@ -13,10 +13,13 @@ playing state....
 OK - init score
 OK - create questions
 OK - create questions on start new game
-
-
+OK - ask letter questions (indicate fret, respond with letter)
+ask fret questions (indicate letter, respond on fret)
 save question and response in log 
-show fret or letters depending on question and response
+
+show right or wrong
+
+
 
 
 game settings -> state
