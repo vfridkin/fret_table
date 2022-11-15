@@ -128,7 +128,17 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         game_select = NULL,
         range_select = NULL,
         turns_select = NULL,
-        start_time = NULL
+        start_time = NULL,
+        temp_log = NULL, # Saved only when game completes
+        saved_log = NULL
+      )
+
+      observeEvent(m$run_once,
+        {
+          m$temp_log <- create_new_log()
+          m$saved_log <- load_saved_log(session)
+        },
+        once = TRUE
       )
 
       # Transport buttons ------------------------------------------------------
@@ -235,41 +245,55 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
           if (source == "letter") {
             response <- state$letter_select %>% letter_to_note()
-            log_row <- get_log_row(
-              question,
-              response,
-              source,
-              m$start_time,
-              state$play_seconds
-            )
           }
 
-
+          log_row <- make_log_row(
+            question,
+            response,
+            source,
+            m$start_time,
+            state$play_seconds
+          )
+          
+          # Log results 
+          m$temp_log <- rbindlist(list(m$temp_log, log_row))
+          
+          # Go to next turn
           state$play_turn <- state$play_turn + 1
         }
       )
 
-      letter_to_note <- function(letter) {
-        split <- strsplit(letter, "_") %>% pluck(1)
-        accidental <- split[2] %>%
-          str_replace("flat", "p") %>%
-          str_replace("sharp", "q") %>%
-          str_replace("natural", "")
-
-        note_name <- toupper(split[1])
-        paste0(note_name, accidental)
-      }
+      # Complete game ----------------------------------------------------------
+      observeEvent(
+        state$play_turn, {
+          if(state$play_turn > m$turns_select){
+            state$is_completed_game <- TRUE
+            state$is_playing <- FALSE
+            state$is_learning <- FALSE
+          }
+          
+        }
+      )
 
       # Game score -------------------------------------------------------------
       score <- reactive({
-        # Initialise data to have an empty score
+
+        log <- m$temp_log[play_time > 0]
+        
+        req(log)
+        req(nrow(log)>0)
+
+        correct <- log$correct %>% 
+          as.character() %>% 
+          map_chr(~k$answer_html[[.x]])
+        
         df <- data.table(s1 = "")
         col_names <- paste0("s", 1:m$turns_select)
 
         for (turn in 1:m$turns_select) {
           col <- col_names[turn]
           valid_turn <- turn < state$play_turn
-          df[[col]] <- iff(valid_turn, answer_html[["FALSE"]], "")
+          df[[col]] <- iff(valid_turn, correct[turn], "")
         }
 
         df

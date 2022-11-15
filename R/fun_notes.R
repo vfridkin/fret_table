@@ -132,6 +132,17 @@ as_note_text <- function(note) {
         str_replace("p", "♭")
 }
 
+letter_to_note <- function(letter) {
+  split <- strsplit(letter, "_") %>% pluck(1)
+  accidental <- split[2] %>%
+    str_replace("flat", "p") %>%
+    str_replace("sharp", "q") %>%
+    str_replace("natural", "")
+  
+  note_name <- toupper(split[1])
+  paste0(note_name, accidental)
+}
+
 as_note_html <- function(note) {
     # Guard empty notes
     if (note == "") {
