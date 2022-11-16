@@ -13,12 +13,14 @@ letters_ui <- function(id) {
   width <- 8
 
   div(
-    id = ns("piano"),
     style = "margin-top: 0px; width: 100vw; padding: 1vw;",
-    in_row(reactableOutput(ns("title_rt")), width),
-    in_row(reactableOutput(ns("sharps_rt")), width),
-    in_row(reactableOutput(ns("naturals_rt")), width),
-    in_row(reactableOutput(ns("flats_rt")), width)
+    div(
+      id = ns("letters_div"),
+      in_row(reactableOutput(ns("title_rt")), width),
+      in_row(reactableOutput(ns("sharps_rt")), width),
+      in_row(reactableOutput(ns("naturals_rt")), width),
+      in_row(reactableOutput(ns("flats_rt")), width)
+    )
   )
 }
 

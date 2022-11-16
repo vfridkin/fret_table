@@ -5,25 +5,28 @@ fretboard_ui <- function(id) {
   ns <- NS(id)
 
   tagList(
-    fluidRow(
-      style = "margin-top: 30px;",
-      reactableOutput(ns("fretboard_rt"))
-    ), # Row
-    fluidRow(
-      column(
-        style = "margin-top: 3px; height: 5px; z-index: 10;",
-        offset = 4,
-        width = 4,
-        align = "center",
-        uiOutput(ns("completed_choices_ui"))
-      ),
-      column(
-        style = "margin-top: 3px; height: 5px; z-index: 10;",
-        width = 4,
-        align = "right",
-        uiOutput(ns("default_accidental_ui"))
-      )
-    ) # fluidRow
+    div(
+      id = "fretboard_div",
+      fluidRow(
+        style = "margin-top: 30px;",
+        reactableOutput(ns("fretboard_rt"))
+      ), # Row
+      fluidRow(
+        column(
+          style = "margin-top: 3px; height: 5px; z-index: 10;",
+          offset = 4,
+          width = 4,
+          align = "center",
+          uiOutput(ns("completed_choices_ui"))
+        ),
+        column(
+          style = "margin-top: 3px; height: 5px; z-index: 10;",
+          width = 4,
+          align = "right",
+          uiOutput(ns("default_accidental_ui"))
+        )
+      ) # fluidRow
+    ) # div
   ) # tagList
 }
 

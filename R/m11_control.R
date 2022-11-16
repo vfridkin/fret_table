@@ -13,106 +13,109 @@ control_ui <- function(id) {
   # Transport and game choices
 
   tagList(
-    div(style = "margin-top: 5px;"),
     div(
-      style = "
+      id = "control_div",
+      div(style = "margin-top: 5px;"),
+      div(
+        style = "
         display: inline-block;
         width: 90px;
         vertical-align: top;
         padding-top: 5px;
       ",
-      transport_button(ns("play_button"), "play",
-        width = "80px",
-        style = glue("
+        transport_button(ns("play_button"), "play",
+          width = "80px",
+          style = glue("
         height: 80px;
         font-size: xx-large;
         color: {k$colour$button_text};
         background-color: {k$colour$button_play};
         ")
-      )
-    ),
-    div(
-      style = "
+        )
+      ),
+      div(
+        style = "
         display: inline-block;
         width: 50px;
         vertical-align:
         top; padding-top: 5px;
       ",
-      transport_button(ns("setting_button"),
-        "info",
-        style = glue("
+        transport_button(ns("info_button"),
+          "info",
+          style = glue("
           height: 35px;
           color: {k$colour$button_text};
           background-color: {k$colour$button_info};
           font-size: larger;
         ")
-      ),
-      transport_button(ns("stop_button"),
-        "stop",
-        style = glue("
+        ),
+        transport_button(ns("stop_button"),
+          "stop",
+          style = glue("
         height: 35px;
         color: {k$colour$button_text};
         background-color: {k$colour$button_stop};
         ")
-      )
-    ),
-    div(
-      style = "
+        )
+      ),
+      div(
+        style = "
         display: inline-block;
         width: -webkit-calc(100vw - 280px);
         height: 50px;
         ",
-      fillRow(
-        flex = c(5, 3, 3),
-        inline_selector(ns("game_select"),
-          game_choices, game_selected,
-          width = "100%"
-        ),
-        inline_selector(ns("range_select"),
-          range_choices, range_selected,
-          width = "100%"
-        ),
-        inline_selector(ns("turns_select"),
-          turns_choices, turns_selected,
-          width = "100%", multiple = FALSE
-        )
-      ) # Row
-      , fillRow(
-        flex = c(1, 5),
-        div(
-          style = "
+        fillRow(
+          flex = c(5, 3, 3),
+          inline_selector(ns("game_select"),
+            game_choices, game_selected,
+            width = "100%"
+          ),
+          inline_selector(ns("range_select"),
+            range_choices, range_selected,
+            width = "100%"
+          ),
+          inline_selector(ns("turns_select"),
+            turns_choices, turns_selected,
+            width = "100%", multiple = FALSE
+          )
+        ) # Row
+        , fillRow(
+          flex = c(1, 5),
+          div(
+            style = "
             display: flex;
             font-size: xx-large;
             padding-left: 10px;
             text-align: center;
             width: 100%;
             ",
-          textOutput(ns("timer"))
-        ),
-        div(
-          style = "
+            textOutput(ns("timer"))
+          ),
+          div(
+            style = "
             display: flex;
             font-size: xx-large;
             font-weight: 900;
             margin-top: -10px;
             padding-left: 5px;
             ",
-          reactableOutput(ns("score"), width = "100%")
-        )
-      ) # Row
-    ) # div
-    , div(
-      style = "
+            reactableOutput(ns("score"), width = "100%")
+          )
+        ) # Row
+      ) # div
+      , div(
+        style = "
       display: inline-block;
       width: 80px;
       vertical-align: top;
       margin-left: 10px
       ",
-      img(
-        height = 100,
-        src = "pick_achu.png",
-        alt = "Opponent image"
-      )
+        img(
+          height = 100,
+          src = "pick_achu.png",
+          alt = "Opponent image"
+        )
+      ) # div
     ) # div
   ) # tagList
 }
@@ -141,6 +144,24 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
       )
 
       # Transport buttons ------------------------------------------------------
+
+      # > Info -----------------------------------------------------------------
+      observeEvent(
+        input$info_button,
+        {
+          introjs(
+            session,
+            options = list(
+              steps = help_steps(),
+              nextLabel = "Next",
+              skipLabel = "x",
+              showStepNumbers = FALSE,
+              showBullets = TRUE,
+              disableInteraction = TRUE
+            )
+          )
+        }
+      )
 
       # > Play -----------------------------------------------------------------
       observeEvent(input$play_button, {

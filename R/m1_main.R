@@ -4,6 +4,7 @@ main_ui <- function(id) {
   tagList(
     div(
       style = "text-align: center;",
+      class = "header__text-box",
       h1(style = "font-family: 'Brush Script MT', cursive;", "Fret Table🎸")
     ),
     control_ui(ns("control")),
