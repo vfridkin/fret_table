@@ -1,4 +1,4 @@
-Fix bug with ambiguous letter
+
 show results after game
 'my performance' - change pick picture to have this writing instead
 my performance popup triggered by clicking on performance pick
@@ -29,3 +29,5 @@ OK design game log dataframe
 OK ask fret questions (indicate letter, respond on fret)
 OK Change logs to be states 
 OK Fix bug with letter still question mode when changing to fret mode
+OK Fix bug with ambiguous letter
+OK Fix ensure at least one game and range selection

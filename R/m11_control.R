@@ -155,12 +155,41 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
       # Game settings ----------------------------------------------------------
       observeEvent(
         input$game_select,
-        m$game_select <- input$game_select
+        {
+          no_select <- is.null(input$game_select)
+
+          # Ensure minimum of 1 selection
+          if (no_select) {
+            shiny::updateSelectizeInput(
+              session,
+              "game_select",
+              selected = ac$game[default == 1]$id
+            )
+            return()
+          }
+
+          m$game_select <- input$game_select
+        },
+        ignoreNULL = FALSE
       )
 
       observeEvent(
         input$range_select,
-        m$range_select <- input$range_select
+        {
+          no_select <- is.null(input$range_select)
+
+          # Ensure minimum of 1 selection
+          if (no_select) {
+            shiny::updateSelectizeInput(
+              session,
+              "range_select",
+              selected = ac$range[default == 1]$id
+            )
+            return()
+          }
+          m$range_select <- input$range_select
+        },
+        ignoreNULL = FALSE
       )
 
       observeEvent(
