@@ -10,14 +10,15 @@ fretboard_ui <- function(id) {
       reactableOutput(ns("fretboard_rt"))
     ), # Row
     fluidRow(
-      style = "margin-top: 3px; height: 5px; z-index: 10;",
       column(
+        style = "margin-top: 3px; height: 5px; z-index: 10;",
         offset = 4,
         width = 4,
         align = "center",
         uiOutput(ns("completed_choices_ui"))
       ),
       column(
+        style = "margin-top: 3px; height: 5px; z-index: 10;",
         width = 4,
         align = "right",
         uiOutput(ns("default_accidental_ui"))

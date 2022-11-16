@@ -193,3 +193,7 @@
 .natural, .sharp, .flat {
   display: none;
 }
+
+.question-note {
+  color: black;
+}
