@@ -1,4 +1,4 @@
-
+Fix bug with ambiguous letter
 show results after game
 'my performance' - change pick picture to have this writing instead
 my performance popup triggered by clicking on performance pick

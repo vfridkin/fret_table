@@ -7,20 +7,17 @@ make_log_row <- function(question, response, source, start_time, play_time) {
     # Convert to log type
     log_row[, type := ac$game[id == type]$log_id]
 
-    if (source == "letter") {
-        log_row[, correct := question$note == response]
-    }
+    fn <- iff(source == "letter", include_enharmonics, fret_to_note)
+    response_note <- response %>% fn()
 
-    if (source == "fret") {
-        response_note <- response %>% fret_to_note()
-        log_row[, correct := (question$note %in% response_note)]
-    }
-
+    log_row[, correct := (question$note %in% response_note)]
     log_row[, start_time := start_time]
     log_row[, play_time := play_time]
 
     log_row
 }
+
+
 
 create_new_log <- function() {
     df <- data.table(

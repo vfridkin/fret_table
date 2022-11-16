@@ -243,3 +243,22 @@ as_note_html <- function(note) {
 }
 
 as_note_html_v <- Vectorize(as_note_html)
+
+# Return note with its enharmonic equivalent
+include_enharmonics <- function(note) {
+    # Length not 2 is a natural or something weird, so gaurd it
+    if (nchar(note) != 2) {
+        return(note)
+    }
+
+    note_split <- strsplit(note, "") %>% pluck(1)
+    accidental <- note_split[2]
+    interval <- iff(accidental == "q", 1, -1)
+
+    enharmonic <- list(
+        letter = next_note(note, interval),
+        accidental = iff(accidental == "q", "p", "q")
+    ) %>% paste(collapse = "")
+
+    c(note, enharmonic)
+}
