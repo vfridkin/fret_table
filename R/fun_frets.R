@@ -154,6 +154,9 @@ note_visibility_by_accidental <- function(session, visible, letter, accidental) 
 #' fret_visible_from_letter(display = "f_sharp")
 #'
 fret_visible_from_letter <- function(session, display) {
+    # Hide all highlights by default
+    clear_questions(session)
+
     # Hide all dots by default
     dot_visibility(session, FALSE)
 

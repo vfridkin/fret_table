@@ -23,7 +23,7 @@ make_log_row <- function(question, response, source, start_time, play_time) {
 }
 
 create_new_log <- function() {
-    data.table(
+    df <- data.table(
         type = 0L,
         note = "X",
         row = 0L,
@@ -32,6 +32,8 @@ create_new_log <- function() {
         start_time = Sys.time(),
         play_time = 0.0
     )
+
+    df[0]
 }
 
 save_log <- function(session, data) {

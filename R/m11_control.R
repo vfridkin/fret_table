@@ -135,6 +135,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       observeEvent(m$run_once,
         {
+          state$saved_log <- load_saved_log(session)
         },
         once = TRUE
       )
@@ -144,8 +145,6 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
       # > Play -----------------------------------------------------------------
       observeEvent(input$play_button, {
         set_state_playing(session)
-        m$temp_log <- create_new_log()
-        m$saved_log <- load_saved_log(session)
       })
 
       # > Stop -----------------------------------------------------------------
@@ -252,7 +251,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           )
 
           # Log results (remove dummy X)
-          m$temp_log <- rbindlist(list(m$temp_log, log_row))[note != "X"]
+          state$temp_log <- rbindlist(list(state$temp_log, log_row))[note != "X"]
 
           # Go to next turn
           state$play_turn <- state$play_turn + 1
@@ -277,13 +276,13 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
             return()
           }
 
-          log <- m$temp_log
+          log <- state$temp_log
 
           # show_game_results_fret(log)
           # show_game_results_letter(log)
 
           # Create new log for saving (remove dummy "X")
-          new_log <- rbindlist(list(m$saved_log, log))[note != "X"]
+          new_log <- rbindlist(list(state$saved_log, log))
 
           # Limit log if over max saved games
           limited_times <- new_log$start_time %>%
@@ -293,56 +292,48 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           new_log <- new_log[start_time %in% limited_times]
 
           save_log(session, new_log)
+          state$saved_log <- new_log
         }
       )
-
-      # Clear log when learning
-      observeEvent(
-        state$is_learning,
-        {
-          if (state$is_learning) {
-            m$temp_log <- create_new_log()
-          }
-        }
-      )
-
 
       # Game score -------------------------------------------------------------
-      score <- reactive({
-        turns <- m$turns_select
-        col_names <- paste0("s", 1:turns)
-        log <- m$temp_log
+      score <- eventReactive(
+        state$temp_log,
+        {
+          turns <- m$turns_select
+          col_names <- paste0("s", 1:turns)
+          log <- state$temp_log
 
-        no_log <- any(
-          is.null(log),
-          nrow(log) == 0
-        )
+          no_log <- any(
+            is.null(log),
+            nrow(log) == 0
+          )
 
-        if (no_log) {
-          df <- rep("", turns) %>%
-            as.list() %>%
-            setDT() %>%
-            set_names(col_names)
-          return(df)
+          if (no_log) {
+            df <- rep("", turns) %>%
+              as.list() %>%
+              setDT() %>%
+              set_names(col_names)
+            return(df)
+          }
+
+          correct <- log$correct %>%
+            as.character() %>%
+            map_chr(~ k$answer_html[[.x]])
+
+          add_fill <- length(correct) < turns
+          if (add_fill) {
+            fill <- rep("", turns - length(correct))
+            correct <- c(correct, fill)
+          }
+
+          df <- setDT(as.list(correct))[]
+          if (ncol(df) != turns) browser()
+          names(df) <- col_names
+
+          df
         }
-
-        log <- log[note != "X"] # In case of dummy row
-
-        correct <- log$correct %>%
-          as.character() %>%
-          map_chr(~ k$answer_html[[.x]])
-
-        add_fill <- length(correct) < turns
-        if (add_fill) {
-          fill <- rep("", turns - length(correct))
-          correct <- c(correct, fill)
-        }
-
-        df <- setDT(as.list(correct))[]
-        names(df) <- col_names
-
-        df
-      })
+      )
 
       output$score <- renderReactable({
         df <- score()

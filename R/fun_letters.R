@@ -10,6 +10,9 @@ letter_highlight <- function(session,
     # Hide all highlights by default
     clear_questions(session)
 
+    # Hide dots
+    dot_visibility(session, FALSE)
+
     # Guard nothing to highlight
     nothing_to_highlight <- any(
         is.null(letter),

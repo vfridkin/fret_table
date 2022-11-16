@@ -1,4 +1,4 @@
-ask fret questions (indicate letter, respond on fret)
+Change logs to be states 
 show results after game
 'my performance' - change pick picture to have this writing instead
 my performance popup triggered by clicking on performance pick
@@ -26,3 +26,4 @@ OK - ask letter questions (indicate fret, respond with letter)
 OK save question and response in log 
 OK show right or wrong
 OK design game log dataframe
+OK ask fret questions (indicate letter, respond on fret)
