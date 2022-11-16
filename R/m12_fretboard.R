@@ -1,3 +1,6 @@
+# Fretboard has a headstock and at least 12 frets
+# Headstock is fret0
+
 fretboard_ui <- function(id) {
   ns <- NS(id)
 
@@ -5,7 +8,21 @@ fretboard_ui <- function(id) {
     fluidRow(
       style = "margin-top: 30px;",
       reactableOutput(ns("fretboard_rt"))
-    ) # Row
+    ), # Row
+    fluidRow(
+      style = "margin-top: 3px; height: 5px; z-index: 10;",
+      column(
+        offset = 4,
+        width = 4,
+        align = "center",
+        uiOutput(ns("completed_choices_ui"))
+      ),
+      column(
+        width = 4,
+        align = "right",
+        uiOutput(ns("default_accidental_ui"))
+      )
+    )
   ) # tagList
 }
 
@@ -16,70 +33,208 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       ns <- session$ns
 
       m <- reactiveValues(
-        run_once = TRUE
+        run_once = FALSE,
+        default_accidental = NULL
       )
 
+      observeEvent(
+        m$run_once,
+        {
+          m$default_accidental <- "sharp"
+        },
+        once = TRUE
+      )
+
+      # fret table without html formatting
+      fret_data <- {
+        note_count <- length(k$open_notes)
+        rows <- 1:note_count
+
+        df <- rows %>%
+          map(
+            function(row) {
+              open_note <- k$open_notes[row]
+              string_notes_with_joined_accidentals(open_note)
+            }
+          ) %>%
+          as.data.table() %>%
+          t() %>%
+          as.data.table() %>%
+          set_names(k$fret_names)
+
+        df
+      }
+
+      # fret table with formatting
+      fret_html <- {
+        df <- fret_data
+        cols <- k$fret_names
+        df <- df[, (cols) := lapply(.SD, as_note_html_v), .SDcols = cols]
+        df <- df %>% add_fret_markers()
+        df
+      }
+
+
       output$fretboard_rt <- renderReactable({
-        # Fretboard has a headstock and at least 12 frets
+        df <- fret_html
+        columns <- get_fret_col_def(k$fret_count)
 
-        string_count <- 6
-        fret_count <- 12
-
-        df <- data.table(headstock = string_count:1)
-        for (fret in 1:fret_count) {
-          df[[paste0("fret", fret)]] <- "<span class='dot'><span class='dot-text'>C♯</span></span>"
-        }
-
-        columns <- get_col_def(fret_count)
+        # Hover is handled by script.js
+        click_input <- ns("fret_click")
 
         reactable(
           df,
           columns = columns,
           sortable = FALSE,
-          defaultColDef = colDef(headerClass = "score-header", html = TRUE, minWidth = 50, align = "center")
+          defaultColDef = colDef(
+            headerClass = "score-header",
+            html = TRUE,
+            minWidth = 50,
+            align = "center"
+          ),
+          onClick = JS(paste0(
+            "function(rowInfo, column) {
+              if (window.Shiny) {
+                console.log(rowInfo);
+                console.log(column);
+                Shiny.setInputValue('",
+            click_input,
+            "', {row: rowInfo.index + 1, col: column.id},
+              {priority: 'event' })
+              }
+            }"
+          ))
         )
       })
+
+      # Only show these choices after game is completed
+      output$completed_choices_ui <- renderUI({
+        if (state$is_completed_game) {
+          checkboxGroupButtons(
+            inputId = ns("completed_action"),
+            label = NULL,
+            choices = k$completed_action_choices,
+            selected = NULL
+          )
+        } else {
+          NULL
+        }
+      })
+
+      observeEvent(input$completed_action, {
+        action <- input$completed_action
+        if(action == "play") set_state_playing()
+        if(action == "learn") set_state_learning()
+      })
+
+      # Choose the default accidental to show in the fretboard when learning
+      output$default_accidental_ui <- renderUI({
+        if (state$is_learning) {
+          radioGroupButtons(
+            inputId = ns("default_accidental"),
+            label = NULL,
+            choices = k$default_accidental_choices,
+            selected = m$default_accidental
+          )
+        } else {
+          NULL
+        }
+      })
+
+      observeEvent(input$default_accidental, {
+        m$default_accidental <- input$default_accidental
+      })
+
+      ## LEARNING --------------------------------------------------------------
+      # > Clean up after playing -----------------------------------------------
+      observeEvent(
+        state$is_learning,
+        {
+          if (state$is_learning) {
+            dot_visibility(session, FALSE)
+            clear_question_notes(session)
+          }
+        }
+      )
+
+      # > Observe fret ---------------------------------------------------------
+      observeEvent(
+        input$fret_cell_hover,
+        {
+          req(state$is_learning)
+          cell_class <- input$fret_cell_hover
+          cell_coords <- cell_class %>%
+            strsplit(" ") %>%
+            pluck(1) %>%
+            tail(2) %>%
+            set_names(c("string", "fret")) %>%
+            as.list()
+          state$fret_select <- cell_coords
+          state$input_source <- "fret"
+        }
+      )
+
+      # > Display fret cells ---------------------------------------------------
+      observeEvent(
+        state$letter_select,
+        {
+          if (state$is_learning) {
+            fret_visible_from_letter(
+              session,
+              state$letter_select
+            )
+          }
+        }
+      )
+
+      observeEvent(
+        state$fret_select,
+        {
+          if (state$is_learning) {
+            fret_visible_from_fretboard(
+              session,
+              state$fret_select,
+              m$default_accidental
+            )
+          }
+        }
+      )
+
+      ## PLAYING ---------------------------------------------------------------
+      # > Observe fret ---------------------------------------------------------
+      observeEvent(
+        input$fret_click,
+        {
+          req(state$is_playing)
+          state$fret_select <- input$fret_click
+          state$input_source <- "fret"
+        }
+      )
+
+      # > Display question -----------------------------------------------------
+      observeEvent(
+        state$question,
+        {
+          if (state$is_playing) {
+            question <- state$question
+
+            # Display on fret when player has to choose the matching note letter
+            req(question$type == "note_letter")
+
+            fret_select <- list(
+              string = paste0("string", question$row),
+              fret = question$fret
+            )
+
+            fret_visible_from_fretboard(
+              session,
+              fret_select,
+              m$default_accidental,
+              role = "question"
+            )
+          }
+        }
+      )
     } # function
   ) # moduleServer
 } # fretboard_server
-
-get_col_def <- function(fret_count) {
-  headstock_coldef <- list(
-    headstock = colDef(
-      name = "",
-      class = "headstock-string",
-      style = function(value, index, name) {
-        paste0(
-          "position: relative;
-          --thickness: ", thickness[index], "px;
-          --rotation: ", rotation[index], "deg;
-          "
-        )
-      }
-    )
-  )
-
-  notes <- c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B")
-  fret_names <- paste0("fret", 1:fret_count)
-  thickness <- c(4, 3, 2, 2, 1, 1)
-  rotation <- c(0, 1, 2, -2, -1, 0)
-
-  frets_coldef <- 1:fret_count %>%
-    map(
-      ~ colDef(
-        name = "",
-        minWidth = 50,
-        html = TRUE,
-        align = "center",
-        class = "guitar-string",
-        style = function(value, index, name) {
-          paste0(
-            "position: relative; --thickness: ", thickness[index], "px;"
-          )
-        }
-      )
-    ) %>%
-    set_names(fret_names)
-
-  c(headstock_coldef, frets_coldef)
-}

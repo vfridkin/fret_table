@@ -2,21 +2,20 @@ letters_ui <- function(id) {
   ns <- NS(id)
 
   in_row <- function(ui, width) {
-    edge_width <- (12 - width) / 2
     fluidRow(
       column(
-        offset = edge_width,
-        width = width,
+        width = 12,
         ui
       )
     )
   }
 
-  width <- 6
+  width <- 8
 
   div(
     id = ns("piano"),
-    style = "margin-top: 30px;",
+    style = "margin-top: 0px; width: 100vw; padding: 1vw;",
+    in_row(reactableOutput(ns("title_rt")), width),
     in_row(reactableOutput(ns("sharps_rt")), width),
     in_row(reactableOutput(ns("naturals_rt")), width),
     in_row(reactableOutput(ns("flats_rt")), width)
@@ -33,44 +32,71 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         run_once = TRUE
       )
 
+      output$title_rt <- renderReactable({
+        # Titles - in order to align with table
+
+        title <- get_state_title(state)
+
+        list(
+          edgekey1 = "",
+          halfkey1 = "",
+          widekey = title,
+          halfkey2 = "",
+          edgekey2 = ""
+        ) %>% to_reactable()
+      })
+
       output$sharps_rt <- renderReactable({
         # C♯ -> A♯
         list(
+          edgekey1 = "",
+          allplus_sharp = "All(♯)",
+          all_sharp = "Sharps",
           halfkey1 = "",
           c_sharp = "C♯",
           d_sharp = "D♯",
-          nokey1 = "",
+          nokey2 = "",
           f_sharp = "F♯",
           g_sharp = "G♯",
           a_sharp = "A♯",
-          halfkey2 = ""
+          halfkey2 = "",
+          edgekey2 = ""
         ) %>% to_reactable()
       })
 
       output$naturals_rt <- renderReactable({
         # C -> B
         list(
+          edgekey1 = "",
+          halfkey1 = "",
+          all_natural = "Naturals",
+          halfkey2 = "",
           c_natural = "C",
           d_natural = "D",
           e_natural = "E",
           f_natural = "F",
           g_natural = "G",
           a_natural = "A",
-          b_natural = "B"
+          b_natural = "B",
+          edgekey2 = ""
         ) %>% to_reactable()
       })
 
       output$flats_rt <- renderReactable({
         # D♭ -> B♭
         list(
+          edgekey1 = "",
+          allplus_flat = "All(♭)",
+          all_flat = "Flats",
           halfkey1 = "",
           d_flat = "D♭",
           e_flat = "E♭",
-          nokey1 = "",
+          nokey2 = "",
           g_flat = "G♭",
           a_flat = "A♭",
           b_flat = "B♭",
-          halfkey2 = ""
+          halfkey2 = "",
+          edgekey2 = ""
         ) %>% to_reactable()
       })
 
@@ -83,7 +109,14 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           df,
           columns = columns,
           sortable = FALSE,
-          defaultColDef = colDef(headerClass = "score-header", html = TRUE, minWidth = 30, align = "center")
+          defaultColDef = colDef(
+            name = "",
+            headerClass = "score-header",
+            html = TRUE,
+            minWidth = k$letter_min_width,
+            maxWidth = k$letter_max_width,
+            align = "center"
+          )
         )
       }
 
@@ -91,28 +124,55 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         notes %>%
           imap(
             function(value, name) {
-              if (str_detect(name, "halfkey")) {
+              is_edgekey <- str_detect(name, "edgekey")
+              is_halfkey <- str_detect(name, "halfkey")
+              is_nokey <- str_detect(name, "nokey")
+              is_key <- str_detect(name, "sharp|natural|flat")
+              is_all <- str_detect(name, "all")
+              is_plus <- str_detect(name, "plus")
+              is_widekey <- str_detect(name, "widekey")
+
+              res <- colDef() # Default
+
+              if (is_edgekey) {
+                min_width <- iff(name == "edgekey1", 10, 15)
+                res <- colDef(minWidth = min_width, maxWidth = 1000)
+              }
+              if (is_halfkey) {
                 res <- colDef(
-                  name = "",
-                  minWidth = 15,
+                  minWidth = k$letter_min_width / 2,
+                  maxWidth = k$letter_max_width / 2
                 )
               }
-              if (str_detect(name, "nokey")) {
+              if (is_widekey) {
                 res <- colDef(
-                  name = "",
+                  align = "left",
+                  minWidth = k$letter_min_width * 8,
+                  maxWidth = k$letter_max_width * 8,
+                  style = "
+                  font-family: 'Brush Script MT', cursive;
+                  font-size: x-large;"
                 )
               }
-              if (str_detect(name, "sharp|natural|flat")) {
+              if (is_key) {
+                # Hide 'all_' buttons when playing
+                is_visible <- any(!is_all, state$is_learning)
+                visibility <- iff(is_visible, "visible", "hidden")
+
                 is_accidental <- str_detect(name, "sharp|flat")
 
-                background_index <- if (is_accidental) "accidental" else "natural"
-                text_index <- if (is_accidental) "natural" else "accidental"
+                background_index <- iff(is_accidental, "accidental", "natural")
+                background_index <- iff(is_plus, "all", background_index)
+                text_index <- iff(is_accidental, "natural", "accidental")
+                # text_index <- iff(is_plus, "accidental", text_index)
 
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]
 
+                hover_input <- ns("letter_hover")
+                click_input <- ns("letter_click")
+
                 res <- colDef(
-                  name = "",
                   cell = function(value, rowIndex, colName) {
                     as.character(tags$div(
                       style = "height: 100%; width: 100%;",
@@ -121,11 +181,26 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                         class = "letter",
                         style = paste0(
                           "--letter-background-colour:", background_colour,
-                          "; --letter-text-colour: ", text_colour
+                          "; --letter-text-colour: ", text_colour,
+                          "; visibility: ", visibility
                         ),
-                        onclick = sprintf("", name)
+                        onmouseover =
+                          sprintf(
+                            'Shiny.setInputValue("%s", "%s", {priority: "event"})',
+                            hover_input, colName
+                          ),
+                        onmouseout =
+                          sprintf(
+                            'Shiny.setInputValue("%s", "%s", {priority: "event"})',
+                            hover_input, ""
+                          ),
+                        onclick =
+                          sprintf(
+                            'Shiny.setInputValue("%s", "%s", {priority: "event"})',
+                            click_input, colName
+                          )
                       ),
-                    )) # sprintf('alert("approve - %s")', name)
+                    ))
                   }
                 )
               }
@@ -134,6 +209,25 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           ) %>%
           set_names(names(notes))
       }
+
+      # Observe letter buttons -------------------------------------------------
+      observeEvent(
+        input$letter_hover,
+        {
+          req(state$is_learning)
+          state$letter_select <- input$letter_hover
+          state$input_source <- "letter"
+        }
+      )
+
+      observeEvent(
+        input$letter_click,
+        {
+          req(state$is_playing)
+          state$letter_select <- input$letter_click
+          state$input_source <- "letter"
+        }
+      )
     } # function
   ) # moduleServer
 } # letters_server

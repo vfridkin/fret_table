@@ -8,7 +8,7 @@ control_ui <- function(id) {
   range_selected <- ac$range[default == 1]$id
 
   turns_choices <- c(5, 10, 20) %>% set_names(paste(., "turns"))
-  turns_selected <- 10
+  turns_selected <- k$default_turns
 
   # Transport and game choices
 
@@ -38,8 +38,7 @@ control_ui <- function(id) {
         vertical-align:
         top; padding-top: 5px;
       ",
-      transport_button(
-        ns("setting_button"),
+      transport_button(ns("setting_button"),
         "info",
         style = glue("
           height: 35px;
@@ -48,8 +47,7 @@ control_ui <- function(id) {
           font-size: larger;
         ")
       ),
-      transport_button(
-        ns("stop_button"),
+      transport_button(ns("stop_button"),
         "stop",
         style = glue("
         height: 35px;
@@ -129,42 +127,198 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         run_once = TRUE,
         game_select = NULL,
         range_select = NULL,
-        turns_select = NULL
+        turns_select = NULL,
+        start_time = NULL,
+        temp_log = NULL, # Saved only when game completes
+        saved_log = NULL
+      )
+
+      observeEvent(m$run_once,
+        {
+          m$temp_log <- create_new_log()
+          m$saved_log <- load_saved_log(session)
+        },
+        once = TRUE
+      )
+
+      # Transport buttons ------------------------------------------------------
+
+      # > Play -----------------------------------------------------------------
+      observeEvent(input$play_button, {
+        set_state_playing()
+      })
+
+      # > Stop -----------------------------------------------------------------
+      observeEvent(input$stop_button, {
+        set_state_learning()
+      })
+
+      # Game settings ----------------------------------------------------------
+      observeEvent(
+        input$game_select,
+        m$game_select <- input$game_select
+      )
+
+      observeEvent(
+        input$range_select,
+        m$range_select <- input$range_select
       )
 
       observeEvent(
         input$turns_select,
-        m$turns_select <- input$turns_select
+        m$turns_select <- input$turns_select %>% as.integer()
       )
 
-      answer <- list(
-        "TRUE" = glue("
-          <span style = '
-          color: {k$colour$button_info};
-          padding: 0;
-          '>♪</span>"),
-        "FALSE" = glue("
-          <span style = '
-            color: {k$colour$button_stop};
-            padding: 0;
-          '>×</span>")
-      )
-
+      # Game timer -------------------------------------------------------------
+      play_duration <- reactive({
+        if (state$is_playing) {
+          invalidateLater(1000)
+          state$play_seconds <- difftime(
+            Sys.time(),
+            state$start_time,
+            units = "secs"
+          )
+        }
+        state$play_seconds
+      })
 
       output$timer <- renderText({
-        # invalidateLater(1000, session)
-        "0:00"
+        td <- seconds_to_period(play_duration())
+        seconds <- round(second(td))
+        minutes <- round(minute(td))
+        sprintf("%02d:%02d", minutes, seconds)
+      })
+
+      # Game questions ---------------------------------------------------------
+      questions <- eventReactive(
+        list(
+          state$is_playing,
+          state$start_time
+        ),
+        {
+          req(state$is_playing)
+          game <- m$game_select
+          range <- m$range_select
+          turns <- m$turns_select
+
+          get_questions(game, range, turns)
+        }
+      )
+
+      # Game turn --------------------------------------------------------------
+
+      observeEvent(
+        state$play_turn,
+        {
+          req(state$is_playing)
+
+          turn <- state$play_turn
+          req(turn > 0)
+
+          state$question <- questions()[turn]
+        }
+      )
+
+      observeEvent(
+        list(
+          state$fret_select,
+          state$letter_select
+        ),
+        {
+          req(state$is_playing)
+          source <- state$input_source
+          question <- state$question
+          question_source <- strsplit(question$type, "_") %>% pluck(1, 2)
+
+          valid_source <- source == question_source
+          if (!valid_source) {
+            return()
+          }
+
+          if (source == "letter") {
+            response <- state$letter_select %>% letter_to_note()
+          }
+
+          log_row <- make_log_row(
+            question,
+            response,
+            source,
+            state$start_time,
+            state$play_seconds
+          )
+
+          # Log results (remove dummy X)
+          m$temp_log <- rbindlist(list(m$temp_log, log_row))[note != "X"]
+
+          # Go to next turn
+          state$play_turn <- state$play_turn + 1
+        }
+      )
+
+      # Complete game ----------------------------------------------------------
+      observeEvent(
+        state$play_turn,
+        {
+          if (state$play_turn > m$turns_select) {
+            set_state_completed()
+          }
+        }
+      )
+
+      # Show results of game
+      observeEvent(
+        state$is_completed_game,
+        {
+          if (!state$is_completed_game) {
+            return()
+          }
+
+          log <- m$temp_log
+
+          # show_game_results_fret(log)
+          # show_game_results_letter(log)
+
+          # Create new log for saving (remove dummy "X")
+          new_log <- rbindlist(list(m$saved_log, log))[note != "X"]
+
+          # Limit log if over max saved games
+          limited_times <- new_log$start_time %>%
+            unique() %>%
+            tail(k$max_saved_games)
+
+          new_log <- new_log[start_time %in% limited_times]
+
+          save_log(session, new_log)
+        }
+      )
+
+
+
+      # Game score -------------------------------------------------------------
+      score <- reactive({
+        log <- m$temp_log
+
+        req(log)
+        req(nrow(log) > 0)
+
+        correct <- log$correct %>%
+          as.character() %>%
+          map_chr(~ k$answer_html[[.x]])
+
+        df <- data.table(s1 = "")
+        col_names <- paste0("s", 1:m$turns_select)
+
+        for (turn in 1:m$turns_select) {
+          col <- col_names[turn]
+          valid_turn <- turn < state$play_turn
+          df[[col]] <- iff(valid_turn, correct[turn], "")
+        }
+
+        df
       })
 
       output$score <- renderReactable({
-        # Initialise data to have an empty score
-        df <- data.table(s1 = "")
-
-        col_names <- paste0("s", 1:m$turns_select)
-
-        for (col in col_names) {
-          df[[col]] <- answer[["FALSE"]]
-        }
+        df <- score()
 
         reactable(
           df,

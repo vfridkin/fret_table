@@ -1,0 +1,34 @@
+OK change learn from selectize to buttons with same rules
+OK transport buttons change state
+OK state play activates timer
+OK state stop stops timer
+OK Show dots based on learn 
+OK - all sharps
+OK - all naturals
+OK - all flats
+OK - all of a single note
+OK - one single note
+playing state....
+
+OK - init score
+OK - create questions
+OK - create questions on start new game
+OK - ask letter questions (indicate fret, respond with letter)
+OK save question and response in log 
+OK show right or wrong
+OK design game log dataframe
+
+ask fret questions (indicate letter, respond on fret)
+show results after game
+
+game settings -> state
+
+design questions from game settings
+- rules for selecting questions
+  - weighted on incorrect responses
+  - 
+
+'my performance' - change pick picture to have this writing instead
+my performance popup triggered by clicking on performance pick
+create questions based on settings and log
+ 

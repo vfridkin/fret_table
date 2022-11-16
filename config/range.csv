@@ -1,4 +1,4 @@
 ﻿id,name,note_range,default
-natural,Naturals,a b c d e f g,1
-sharp,Sharps,as cs ds fs gs,
-flat,Flats,af bf df ef gf,
+natural,Naturals, A B C D E F G,1
+sharp,Sharps, Aq Cq Dq Fq Gq,
+flat,Flats,Ap Bp Dp Ep Gp,

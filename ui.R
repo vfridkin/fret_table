@@ -14,30 +14,27 @@
 # -= Welcome to Fret Table =-
 #
 # Modules
-# > main - the main screen of the app
-# > control - the control bar at the top of the app
-# > fret - the guitar fret in the middle (using reactable)
-# v note - the note name buttons below (using reactables)
-# > setting - app settings
-# > help
+# > m1_main - the main screen of the app
+# > m11_control - the control bar at the top of the app
+# > m12_fretboard - the guitar fret in the middle (using reactable)
+# > m13_letters - the note name buttons below (using reactables)
+# > m14_info - app information and settings
 #
 # Summary of design
 # ~~~~~~~~~~~~~~~~~
 # Configuration is controlled from YAML and CSV files.
 # Local storage is used to save user changes.
-# ui.R and server.R contain main ui and server.
-# main contains all the other modules
 #
 # Thanks for reading and hope you enjoy the app, Vlad Fridkin 2022
 #
 ################################################################################
 
 fluidPage(
-  # CSS and JS files - for animation, styling and custom interactions
-  load_styles()
-  # , includeScript("www/script.js")
+  # CSS and JS files
+  load_styles(),
+  load_scripts(),
   # Tour dependency
-  , introjsUI()
+  introjsUI(),
   # Main
-  , main_ui("main")
+  main_ui("main")
 )
