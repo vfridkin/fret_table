@@ -68,12 +68,16 @@ Shiny.addCustomMessageHandler(
   }
 );
 
+// Letter visibility
+Shiny.addCustomMessageHandler("Learn_letters_visibility", function (visible) {
+  const letters = `.learn-letter`;
+  visible ? $(letters).show() : $(letters).hide();
+});
+
 // Highlight letters
 
 Shiny.addCustomMessageHandler("letter_add_highlight", function (input) {
-  const letter = `${input.letter}`;
-  console.log(letter);
-  console.log(input);
-  $(letter).css("background", input.highlight_colour);
-  $(letter).css("color", input.colour);
+  const button = `.${input.letter_class}`;
+  $(button).css("background", input.highlight_colour);
+  $(button).css("color", input.colour);
 });

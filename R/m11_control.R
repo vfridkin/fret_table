@@ -145,12 +145,12 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # > Play -----------------------------------------------------------------
       observeEvent(input$play_button, {
-        set_state_playing()
+        set_state_playing(session)
       })
 
       # > Stop -----------------------------------------------------------------
       observeEvent(input$stop_button, {
-        set_state_learning()
+        set_state_learning(session)
       })
 
       # Game settings ----------------------------------------------------------
@@ -260,7 +260,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         state$play_turn,
         {
           if (state$play_turn > m$turns_select) {
-            set_state_completed()
+            set_state_completed(session)
           }
         }
       )

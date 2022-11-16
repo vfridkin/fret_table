@@ -23,24 +23,26 @@ get_state_title <- function(state) {
     }
 }
 
-set_state_learning <- function() {
+set_state_learning <- function(session) {
     state$is_learning <- TRUE
     state$is_playing <- FALSE
     state$is_completed_game <- FALSE
     state$play_seconds <- 0
     state$play_turn <- 0
+    Learn_letters_visibility(session, TRUE)
 }
 
-set_state_playing <- function() {
+set_state_playing <- function(session) {
     state$is_learning <- FALSE
     state$is_playing <- TRUE
     state$is_completed_game <- FALSE
     state$play_seconds <- 0
     state$play_turn <- 1
     state$start_time <- Sys.time()
+    Learn_letters_visibility(session, FALSE)
 }
 
-set_state_completed <- function() {
+set_state_completed <- function(session) {
     state$is_learning <- FALSE
     state$is_playing <- FALSE
     state$is_completed_game <- TRUE

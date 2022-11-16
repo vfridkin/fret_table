@@ -24,16 +24,20 @@ letter_highlight <- function(session,
 }
 
 letter_add_highlight <- function(session, letter = "", role = "question") {
-    letter_class <- glue(".{letter}-letter")
+    letter_class <- glue("{letter}-letter")
     highlight_colour <- k$colour[[role]]
 
     session$sendCustomMessage(
         "letter_add_highlight",
         list(
-            letter = letter_class,
+            letter_class = letter_class,
             role = role,
             highlight_colour = highlight_colour,
             colour = k$colour$accidental
         )
     )
+}
+
+Learn_letters_visibility <- function(session, visible) {
+    session$sendCustomMessage("Learn_letters_visibility", visible)
 }

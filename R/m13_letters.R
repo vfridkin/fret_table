@@ -34,7 +34,6 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
 
       output$title_rt <- renderReactable({
         # Titles - in order to align with table
-
         title <- get_state_title(state)
 
         list(
@@ -47,6 +46,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
       })
 
       output$sharps_rt <- renderReactable({
+        message("Rendering sharps_rt")
         # C♯ -> A♯
         list(
           edgekey1 = "",
@@ -155,16 +155,11 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                 )
               }
               if (is_key) {
-                # Hide 'all_' buttons when playing
-                is_visible <- any(!is_all, state$is_learning)
-                visibility <- iff(is_visible, "visible", "hidden")
-
                 is_accidental <- str_detect(name, "sharp|flat")
 
                 background_index <- iff(is_accidental, "accidental", "natural")
                 background_index <- iff(is_plus, "all", background_index)
                 text_index <- iff(is_accidental, "natural", "accidental")
-                # text_index <- iff(is_plus, "accidental", text_index)
 
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]
@@ -175,7 +170,9 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                 res <- colDef(
                   cell = function(value, rowIndex, colName) {
                     note <- letter_to_note(colName)
-                    accidental <- colName %>% strsplit("_") %>% pluck(1,2)
+                    accidental <- colName %>%
+                      strsplit("_") %>%
+                      pluck(1, 2)
                     letter_class <- glue("letter {note}-letter {accidental}-letter")
                     as.character(tags$div(
                       style = "height: 100%; width: 100%;",
@@ -184,8 +181,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                         class = letter_class,
                         style = paste0(
                           "--letter-background-colour:", background_colour,
-                          "; --letter-text-colour: ", text_colour,
-                          "; visibility: ", visibility
+                          "; --letter-text-colour: ", text_colour
                         ),
                         onmouseover =
                           sprintf(
@@ -244,7 +240,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
 
             # Display letter when player has to choose the matching fret
             req(question$type == "note_fret")
-            
+
             letter_highlight(
               session,
               question$note,

@@ -22,7 +22,7 @@ fretboard_ui <- function(id) {
         align = "right",
         uiOutput(ns("default_accidental_ui"))
       )
-    )
+    ) # fluidRow
   ) # tagList
 }
 
@@ -123,8 +123,8 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       observeEvent(input$completed_action, {
         action <- input$completed_action
-        if (action == "play") set_state_playing()
-        if (action == "learn") set_state_learning()
+        if (action == "play") set_state_playing(session)
+        if (action == "learn") set_state_learning(session)
       })
 
       # Choose the default accidental to show in the fretboard when learning

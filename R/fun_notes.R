@@ -133,14 +133,24 @@ as_note_text <- function(note) {
 }
 
 letter_to_note <- function(letter) {
-  split <- strsplit(letter, "_") %>% pluck(1)
-  accidental <- split[2] %>%
-    str_replace("flat", "p") %>%
-    str_replace("sharp", "q") %>%
-    str_replace("natural", "")
-  
-  note_name <- toupper(split[1])
-  paste0(note_name, accidental)
+    split <- strsplit(letter, "_") %>% pluck(1)
+    accidental <- split[2] %>%
+        str_replace("flat", "p") %>%
+        str_replace("sharp", "q") %>%
+        str_replace("natural", "")
+
+    note_name <- toupper(split[1])
+
+    # Handle learning letters - have 'all' in their name
+    is_learn_letter <- str_detect(note_name, "ALL")
+
+    note <- iff(
+        is_learn_letter,
+        "learn",
+        paste0(note_name, accidental)
+    )
+
+    note
 }
 
 as_note_html <- function(note) {
