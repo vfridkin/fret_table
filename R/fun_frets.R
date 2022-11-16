@@ -122,7 +122,7 @@ note_visibility <- function(session,
 }
 
 #' Remove all question notes - do this after each game
-clear_question_notes <- function(session) {
+clear_questions <- function(session) {
     session$sendCustomMessage(
         "clear_questions", ""
     )

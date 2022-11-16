@@ -1,4 +1,11 @@
 // Visibility
+Shiny.addCustomMessageHandler("clear_questions", function (input) {
+  $(".question-note").remove();
+  $(".dot").css("background", "");
+  $(".letter").css("background", "");
+  $(".letter").css("color", "");
+});
+
 Shiny.addCustomMessageHandler("dot_all_visibility", function (visible) {
   console.log(`dot_all_visibility ${visible}`);
   visible ? $(".dot").show() : $(".dot").hide();
@@ -61,7 +68,12 @@ Shiny.addCustomMessageHandler(
   }
 );
 
-Shiny.addCustomMessageHandler("clear_questions", function (input) {
-  $(".question-note").remove();
-  $(".dot").css("background", "");
+// Highlight letters
+
+Shiny.addCustomMessageHandler("letter_add_highlight", function (input) {
+  const letter = `${input.letter}`;
+  console.log(letter);
+  console.log(input);
+  $(letter).css("background", input.highlight_colour);
+  $(letter).css("color", input.colour);
 });

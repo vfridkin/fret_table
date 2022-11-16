@@ -174,11 +174,14 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
 
                 res <- colDef(
                   cell = function(value, rowIndex, colName) {
+                    note <- letter_to_note(colName)
+                    accidental <- colName %>% strsplit("_") %>% pluck(1,2)
+                    letter_class <- glue("letter {note}-letter {accidental}-letter")
                     as.character(tags$div(
                       style = "height: 100%; width: 100%;",
                       tags$button(
                         value,
-                        class = "letter",
+                        class = letter_class,
                         style = paste0(
                           "--letter-background-colour:", background_colour,
                           "; --letter-text-colour: ", text_colour,
@@ -210,6 +213,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           set_names(names(notes))
       }
 
+      ## LEARNING --------------------------------------------------------------
       # Observe letter buttons -------------------------------------------------
       observeEvent(
         input$letter_hover,
@@ -220,6 +224,8 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         }
       )
 
+      ## PLAYING ---------------------------------------------------------------
+      # > Observe letter buttons -----------------------------------------------
       observeEvent(
         input$letter_click,
         {
@@ -227,7 +233,26 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           state$letter_select <- input$letter_click
           state$input_source <- "letter"
         }
-      )
+      ) # observeEvent
+
+      # > Display question -----------------------------------------------------
+      observeEvent(
+        state$question,
+        {
+          if (state$is_playing) {
+            question <- state$question
+
+            # Display letter when player has to choose the matching fret
+            req(question$type == "note_fret")
+            
+            letter_highlight(
+              session,
+              question$note,
+              role = "question"
+            )
+          }
+        }
+      ) # observeEvent
     } # function
   ) # moduleServer
 } # letters_server

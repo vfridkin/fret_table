@@ -123,8 +123,8 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       observeEvent(input$completed_action, {
         action <- input$completed_action
-        if(action == "play") set_state_playing()
-        if(action == "learn") set_state_learning()
+        if (action == "play") set_state_playing()
+        if (action == "learn") set_state_learning()
       })
 
       # Choose the default accidental to show in the fretboard when learning
@@ -152,7 +152,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         {
           if (state$is_learning) {
             dot_visibility(session, FALSE)
-            clear_question_notes(session)
+            clear_questions(session)
           }
         }
       )
@@ -234,7 +234,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
             )
           }
         }
-      )
+      ) # observeEvent
     } # function
   ) # moduleServer
 } # fretboard_server

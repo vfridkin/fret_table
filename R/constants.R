@@ -18,7 +18,7 @@ k <- tibble::lst(
     wrong = "#ef476f"
   ),
   default_turns = 5,
-  max_saved_games = 2,
+  max_saved_games = 100,
   notes = c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B"),
   completed_action_choices = set_names(c("play", "learn"), c("Play again", "Learn")),
   default_accidental_choices = set_names(c("sharp", "flat"), c("♯", "♭")),
