@@ -228,8 +228,9 @@ fret_visible_from_fretboard <- function(session,
                                         display,
                                         accidental,
                                         role = "display") {
-    # Hide all dots by default
+    # Hide all dots and questions
     dot_visibility(session, FALSE)
+    clear_questions(session)
 
     # Guard nothing to display
     nothing_to_display <- any(

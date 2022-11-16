@@ -7,11 +7,9 @@
 letter_highlight <- function(session,
                              letter,
                              role = "question") {
-    # Hide all highlights by default
-    clear_questions(session)
-
-    # Hide dots
+    # Hide all dots and questions
     dot_visibility(session, FALSE)
+    clear_questions(session)
 
     # Guard nothing to highlight
     nothing_to_highlight <- any(
