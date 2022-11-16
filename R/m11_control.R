@@ -61,7 +61,7 @@ control_ui <- function(id) {
       div(
         style = "
         display: inline-block;
-        width: -webkit-calc(100vw - 280px);
+        width: -webkit-calc(100vw - 290px);
         height: 50px;
         ",
         fillRow(
@@ -106,14 +106,14 @@ control_ui <- function(id) {
       , div(
         style = "
       display: inline-block;
-      width: 80px;
+      width: 70px;
       vertical-align: top;
-      margin-left: 10px
+      margin-left: -20px
       ",
         img(
           height = 100,
-          src = "pick_achu.png",
-          alt = "Opponent image"
+          src = "plectrum.png",
+          alt = "My Performance Image"
         )
       ) # div
     ) # div
