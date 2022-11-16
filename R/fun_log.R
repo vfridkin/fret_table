@@ -1,24 +1,26 @@
 make_log_row <- function(question, response, source, start_time, play_time) {
     log_row <- question[, .(type, note, row, column)]
-    play_time <- play_time %>% as.numeric() %>% round(2)
+    play_time <- play_time %>%
+        as.numeric() %>%
+        round(2)
 
     # Convert to log type
     log_row[, type := ac$game[id == type]$log_id]
 
     if (source == "letter") {
-      log_row[, correct := question$note == response]
+        log_row[, correct := question$note == response]
     }
 
     log_row[, start_time := start_time]
     log_row[, play_time := play_time]
-    
+
     log_row
 }
 
 create_new_log <- function() {
     data.table(
         type = 0L,
-        note = "",
+        note = "X",
         row = 0L,
         column = 0L,
         correct = FALSE,
@@ -27,6 +29,9 @@ create_new_log <- function() {
     )
 }
 
+save_log <- function(session, data) {
+    set_local_storage("log", data, session)
+}
 
 load_saved_log <- function(session) {
     log <- get_local_storage("log", session)

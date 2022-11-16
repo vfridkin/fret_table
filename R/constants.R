@@ -17,7 +17,10 @@ k <- tibble::lst(
     right = "#06d6a0",
     wrong = "#ef476f"
   ),
+  default_turns = 5,
+  max_saved_games = 2,
   notes = c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B"),
+  completed_action_choices = set_names(c("play", "learn"), c("Play again", "Learn")),
   default_accidental_choices = set_names(c("sharp", "flat"), c("♯", "♭")),
   string_count = 6,
   fret_count = 12,
@@ -36,5 +39,7 @@ k <- tibble::lst(
             color: {colour$wrong};
             padding: 0;
           '>×</span>")
-  )
+  ),
+  letter_min_width = 70,
+  letter_max_width = 120
 )

@@ -14,26 +14,21 @@ OK - init score
 OK - create questions
 OK - create questions on start new game
 OK - ask letter questions (indicate fret, respond with letter)
+OK save question and response in log 
+OK show right or wrong
+OK design game log dataframe
+
 ask fret questions (indicate letter, respond on fret)
-save question and response in log 
-
-show right or wrong
-
-
-
+show results after game
 
 game settings -> state
-design game log dataframe
-
- SELECTED: game | range | turns | PLAYING: start datetime | event datetime | turn | question_type | Ask | Response | Accuracy  
 
 design questions from game settings
 - rules for selecting questions
   - weighted on incorrect responses
   - 
 
-| turn | question_type | ask |
-
-
+'my performance' - change pick picture to have this writing instead
+my performance popup triggered by clicking on performance pick
 create questions based on settings and log
  

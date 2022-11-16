@@ -35,19 +35,12 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
       output$title_rt <- renderReactable({
         # Titles - in order to align with table
 
-        title <- iff(state$is_playing, "Playing...", "Learn")
+        title <- get_state_title(state)
 
         list(
           edgekey1 = "",
           halfkey1 = "",
-          nokey1 = title,
-          nokey2 = "",
-          nokey3 = "",
-          nokey4 = "",
-          nokey5 = "",
-          nokey6 = "",
-          nokey7 = "",
-          nokey8 = "",
+          widekey = title,
           halfkey2 = "",
           edgekey2 = ""
         ) %>% to_reactable()
@@ -120,8 +113,8 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
             name = "",
             headerClass = "score-header",
             html = TRUE,
-            minWidth = 70,
-            maxWidth = 120,
+            minWidth = k$letter_min_width,
+            maxWidth = k$letter_max_width,
             align = "center"
           )
         )
@@ -137,6 +130,9 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
               is_key <- str_detect(name, "sharp|natural|flat")
               is_all <- str_detect(name, "all")
               is_plus <- str_detect(name, "plus")
+              is_widekey <- str_detect(name, "widekey")
+
+              res <- colDef() # Default
 
               if (is_edgekey) {
                 min_width <- iff(name == "edgekey1", 10, 15)
@@ -144,12 +140,15 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
               }
               if (is_halfkey) {
                 res <- colDef(
-                  minWidth = 35,
-                  maxWidth = 60
+                  minWidth = k$letter_min_width / 2,
+                  maxWidth = k$letter_max_width / 2
                 )
               }
-              if (is_nokey) {
+              if (is_widekey) {
                 res <- colDef(
+                  align = "left",
+                  minWidth = k$letter_min_width * 8,
+                  maxWidth = k$letter_max_width * 8,
                   style = "
                   font-family: 'Brush Script MT', cursive;
                   font-size: x-large;"
@@ -157,7 +156,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
               }
               if (is_key) {
                 # Hide 'all_' buttons when playing
-                is_visible <- any(!is_all, !state$is_playing)
+                is_visible <- any(!is_all, state$is_learning)
                 visibility <- iff(is_visible, "visible", "hidden")
 
                 is_accidental <- str_detect(name, "sharp|flat")

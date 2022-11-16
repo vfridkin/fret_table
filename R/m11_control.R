@@ -8,7 +8,7 @@ control_ui <- function(id) {
   range_selected <- ac$range[default == 1]$id
 
   turns_choices <- c(5, 10, 20) %>% set_names(paste(., "turns"))
-  turns_selected <- 10
+  turns_selected <- k$default_turns
 
   # Transport and game choices
 
@@ -145,21 +145,13 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # > Play -----------------------------------------------------------------
       observeEvent(input$play_button, {
-        state$is_learning <- FALSE
-        state$is_playing <- TRUE
-        state$play_seconds <- 0
-        state$play_turn <- 1
-        m$start_time <- Sys.time()
+        set_state_playing()
       })
 
       # > Stop -----------------------------------------------------------------
       observeEvent(input$stop_button, {
-        state$is_learning <- TRUE
-        state$is_playing <- FALSE
-        state$play_seconds <- 0
-        state$play_turn <- 0
+        set_state_learning()
       })
-
 
       # Game settings ----------------------------------------------------------
       observeEvent(
@@ -183,7 +175,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           invalidateLater(1000)
           state$play_seconds <- difftime(
             Sys.time(),
-            m$start_time,
+            state$start_time,
             units = "secs"
           )
         }
@@ -201,7 +193,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
       questions <- eventReactive(
         list(
           state$is_playing,
-          m$start_time
+          state$start_time
         ),
         {
           req(state$is_playing)
@@ -251,13 +243,13 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
             question,
             response,
             source,
-            m$start_time,
+            state$start_time,
             state$play_seconds
           )
-          
-          # Log results 
-          m$temp_log <- rbindlist(list(m$temp_log, log_row))
-          
+
+          # Log results (remove dummy X)
+          m$temp_log <- rbindlist(list(m$temp_log, log_row))[note != "X"]
+
           # Go to next turn
           state$play_turn <- state$play_turn + 1
         }
@@ -265,28 +257,54 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # Complete game ----------------------------------------------------------
       observeEvent(
-        state$play_turn, {
-          if(state$play_turn > m$turns_select){
-            state$is_completed_game <- TRUE
-            state$is_playing <- FALSE
-            state$is_learning <- FALSE
+        state$play_turn,
+        {
+          if (state$play_turn > m$turns_select) {
+            set_state_completed()
           }
-          
         }
       )
 
+      # Show results of game
+      observeEvent(
+        state$is_completed_game,
+        {
+          if (!state$is_completed_game) {
+            return()
+          }
+
+          log <- m$temp_log
+
+          # show_game_results_fret(log)
+          # show_game_results_letter(log)
+
+          # Create new log for saving (remove dummy "X")
+          new_log <- rbindlist(list(m$saved_log, log))[note != "X"]
+
+          # Limit log if over max saved games
+          limited_times <- new_log$start_time %>%
+            unique() %>%
+            tail(k$max_saved_games)
+
+          new_log <- new_log[start_time %in% limited_times]
+
+          save_log(session, new_log)
+        }
+      )
+
+
+
       # Game score -------------------------------------------------------------
       score <- reactive({
+        log <- m$temp_log
 
-        log <- m$temp_log[play_time > 0]
-        
         req(log)
-        req(nrow(log)>0)
+        req(nrow(log) > 0)
 
-        correct <- log$correct %>% 
-          as.character() %>% 
-          map_chr(~k$answer_html[[.x]])
-        
+        correct <- log$correct %>%
+          as.character() %>%
+          map_chr(~ k$answer_html[[.x]])
+
         df <- data.table(s1 = "")
         col_names <- paste0("s", 1:m$turns_select)
 

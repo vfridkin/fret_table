@@ -10,9 +10,15 @@ fretboard_ui <- function(id) {
       reactableOutput(ns("fretboard_rt"))
     ), # Row
     fluidRow(
+      style = "margin-top: 3px; height: 5px; z-index: 10;",
       column(
-        style = "margin-top: 3px; height: 5px; z-index: 10;",
-        width = 12,
+        offset = 4,
+        width = 4,
+        align = "center",
+        uiOutput(ns("completed_choices_ui"))
+      ),
+      column(
+        width = 4,
         align = "right",
         uiOutput(ns("default_accidental_ui"))
       )
@@ -101,6 +107,27 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         )
       })
 
+      # Only show these choices after game is completed
+      output$completed_choices_ui <- renderUI({
+        if (state$is_completed_game) {
+          checkboxGroupButtons(
+            inputId = ns("completed_action"),
+            label = NULL,
+            choices = k$completed_action_choices,
+            selected = NULL
+          )
+        } else {
+          NULL
+        }
+      })
+
+      observeEvent(input$completed_action, {
+        action <- input$completed_action
+        if(action == "play") set_state_playing()
+        if(action == "learn") set_state_learning()
+      })
+
+      # Choose the default accidental to show in the fretboard when learning
       output$default_accidental_ui <- renderUI({
         if (state$is_learning) {
           radioGroupButtons(
