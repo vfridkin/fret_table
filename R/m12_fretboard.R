@@ -100,7 +100,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
                 console.log(column);
                 Shiny.setInputValue('",
             click_input,
-            "', {row: rowInfo.index + 1, col: column.id},
+            "', {row: rowInfo.index + 1, fret: column.id},
               {priority: 'event' })
               }
             }"

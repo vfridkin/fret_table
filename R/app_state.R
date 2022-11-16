@@ -46,4 +46,5 @@ set_state_completed <- function(session) {
     state$is_learning <- FALSE
     state$is_playing <- FALSE
     state$is_completed_game <- TRUE
+    clear_questions(session)
 }

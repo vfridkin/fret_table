@@ -135,8 +135,6 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       observeEvent(m$run_once,
         {
-          m$temp_log <- create_new_log()
-          m$saved_log <- load_saved_log(session)
         },
         once = TRUE
       )
@@ -146,6 +144,8 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
       # > Play -----------------------------------------------------------------
       observeEvent(input$play_button, {
         set_state_playing(session)
+        m$temp_log <- create_new_log()
+        m$saved_log <- load_saved_log(session)
       })
 
       # > Stop -----------------------------------------------------------------
@@ -239,6 +239,10 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
             response <- state$letter_select %>% letter_to_note()
           }
 
+          if (source == "fret") {
+            response <- state$fret_select
+          }
+
           log_row <- make_log_row(
             question,
             response,
@@ -292,27 +296,50 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
         }
       )
 
+      # Clear log when learning
+      observeEvent(
+        state$is_learning,
+        {
+          if (state$is_learning) {
+            m$temp_log <- create_new_log()
+          }
+        }
+      )
 
 
       # Game score -------------------------------------------------------------
       score <- reactive({
+        turns <- m$turns_select
+        col_names <- paste0("s", 1:turns)
         log <- m$temp_log
 
-        req(log)
-        req(nrow(log) > 0)
+        no_log <- any(
+          is.null(log),
+          nrow(log) == 0
+        )
+
+        if (no_log) {
+          df <- rep("", turns) %>%
+            as.list() %>%
+            setDT() %>%
+            set_names(col_names)
+          return(df)
+        }
+
+        log <- log[note != "X"] # In case of dummy row
 
         correct <- log$correct %>%
           as.character() %>%
           map_chr(~ k$answer_html[[.x]])
 
-        df <- data.table(s1 = "")
-        col_names <- paste0("s", 1:m$turns_select)
-
-        for (turn in 1:m$turns_select) {
-          col <- col_names[turn]
-          valid_turn <- turn < state$play_turn
-          df[[col]] <- iff(valid_turn, correct[turn], "")
+        add_fill <- length(correct) < turns
+        if (add_fill) {
+          fill <- rep("", turns - length(correct))
+          correct <- c(correct, fill)
         }
+
+        df <- setDT(as.list(correct))[]
+        names(df) <- col_names
 
         df
       })

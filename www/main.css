@@ -126,6 +126,11 @@
   top: -6px;
 }
 
+/* default accidental */
+.btn.radiobtn {
+  font-weight: 900;
+}
+
 
 /* letters */
 #main-letters-piano .rt-td-inner {

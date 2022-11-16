@@ -153,6 +153,24 @@ letter_to_note <- function(letter) {
     note
 }
 
+fret_to_note <- function(coord) {
+    valid <- all(
+        !is.null(coord$row),
+        !is.null(coord$fret)
+    )
+
+    if (!valid) {
+        return(NULL)
+    }
+
+    open_note <- k$open_notes[coord$row]
+    interval <- coord$fret %>%
+        str_replace("fret", "") %>%
+        as.integer()
+    next_note(open_note, interval)
+}
+
+
 as_note_html <- function(note) {
     # Guard empty notes
     if (note == "") {

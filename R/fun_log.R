@@ -11,6 +11,11 @@ make_log_row <- function(question, response, source, start_time, play_time) {
         log_row[, correct := question$note == response]
     }
 
+    if (source == "fret") {
+        response_note <- response %>% fret_to_note()
+        log_row[, correct := (question$note %in% response_note)]
+    }
+
     log_row[, start_time := start_time]
     log_row[, play_time := play_time]
 
