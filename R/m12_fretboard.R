@@ -210,7 +210,10 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         input$fret_click,
         {
           req(state$is_playing)
-          state$fret_select <- input$fret_click
+          state$fret_select <- list(
+            val = input$fret_click,
+            time = Sys.time()
+          )
           state$input_source <- "fret"
         }
       )

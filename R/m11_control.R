@@ -285,11 +285,11 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           }
 
           if (source == "letter") {
-            response <- state$letter_select %>% letter_to_note()
+            response <- state$letter_select$val %>% letter_to_note()
           }
 
           if (source == "fret") {
-            response <- state$fret_select
+            response <- state$fret_select$val
           }
 
           log_row <- make_log_row(

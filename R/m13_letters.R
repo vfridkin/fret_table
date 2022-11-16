@@ -228,7 +228,10 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         input$letter_click,
         {
           req(state$is_playing)
-          state$letter_select <- input$letter_click
+          state$letter_select <- list(
+            val = input$letter_click,
+            time = Sys.time()
+          )
           state$input_source <- "letter"
         }
       ) # observeEvent
