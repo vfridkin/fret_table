@@ -18,3 +18,22 @@ get_answer_html <- function(answer, colour, prefix = "") {
         </span>
     ") %>% as.character()
 }
+
+# Icon with a link
+icon_link <- function(name, link) {
+    a(href = link, target = "_blank", rel = "noopener noreferrer", icon(name))
+}
+
+footer_element <- function() {
+    div(
+        class = "footer",
+        div(
+            class = "footer__text-box",
+            div(
+                HTML("Posit Table Contest 2022 &copy; Vlad Fridkin"),
+                icon_link("linkedin", "https://www.linkedin.com/in/vfridkin/"),
+                icon_link("github", "https://github.com/vfridkin")
+            )
+        )
+    )
+}

@@ -1,3 +1,16 @@
+:root {
+  --fret-marker-size: 12px;
+  --colour-white-rgb: 255, 255, 255;
+  --colour-black-rgb: 0, 0, 0;
+  --alpha-high: 0.87;
+  --alpha-med: 0.6;
+  --alpha-low: 0.38;
+}
+
+body {
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
 .selectize-control {
   display: inline-block;
   vertical-align: middle;
@@ -95,9 +108,7 @@
   transform-origin: center right;
 }
 
-:root {
-  --fret-marker-size: 12px;
-}
+
 
 /* fret marker */
 .fret-marker {
@@ -181,7 +192,7 @@
   color: var(--dot-text);
   border-radius: 50%;
   display: inline-block;
-  z-index: 4;
+  z-index: 5;
   position: absolute;
   left: calc(50% - 15px);
   top: 0px;
@@ -209,6 +220,35 @@
   font-size: xx-large;
   margin-top: -13px;
   position: absolute;
-  z-index: 10;
+  z-index: 4;
   text-shadow: 1px 1px 2px white, 2px 2px 3px black;
+}
+
+/* Footer ---------------------------------------------------------------------------------------*/
+
+.footer {
+  position: absolute;
+  bottom: 5px;
+  margin-top: 10px;
+  height: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.footer__text-box i {
+  margin-left: 5px;
+  font-size: smaller;
+  color: rgba(var(--colour-black-rgb), var(--alpha-low));
+}
+
+.footer__text-box i:hover {
+  color: rgba(var(--colour-black-rgb), var(--alpha-high));
+}
+
+.footer__text-box > div {
+  color: rgba(var(--colour-black-rgb), var(--alpha-low));
+}
+
+.footer__text-box > div:hover {
+  color: rgba(var(--colour-black-rgb), var(--alpha-high));
 }

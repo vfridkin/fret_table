@@ -133,7 +133,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # Choose the default accidental to show in the fretboard when learning
       output$default_accidental_ui <- renderUI({
-        if (state$is_learning) {
+        if (state$is_learning | state$is_completed_game) {
           radioGroupButtons(
             inputId = ns("default_accidental"),
             label = NULL,
@@ -165,7 +165,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         input$fret_cell_hover,
         {
-          req(state$is_learning)
+          req(state$is_learning | state$is_completed_game)
           cell_class <- input$fret_cell_hover
           cell_coords <- cell_class %>%
             strsplit(" ") %>%
@@ -194,7 +194,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         state$fret_select,
         {
-          if (state$is_learning) {
+          if (state$is_learning | state$is_completed_game) {
             fret_visible_from_fretboard(
               session,
               state$fret_select,

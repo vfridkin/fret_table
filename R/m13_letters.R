@@ -30,10 +30,6 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
     function(input, output, session) {
       ns <- session$ns
 
-      m <- reactiveValues(
-        run_once = TRUE
-      )
-
       output$title_rt <- renderReactable({
         # Titles - in order to align with table
         title <- get_state_title(state)

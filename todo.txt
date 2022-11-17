@@ -1,8 +1,8 @@
 
-show results after game
 my performance popup triggered by clicking on performance pick
-create questions based on settings and log
+indicate correct when clicking note during play
 Read me help
+create questions based on settings and log
 design questions from game settings
 - rules for selecting questions
   - weighted on incorrect responses
@@ -32,3 +32,4 @@ OK Fix ensure at least one game and range selection
 OK inline help
 OK 'my performance' - change pick picture to have this writing instead
 OK Fix repeat fret or letter selection - not registering
+OK show results after game
