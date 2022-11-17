@@ -328,8 +328,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
           log <- state$temp_log
 
-          # show_game_results_fret(log)
-          # show_game_results_letter(log)
+          show_game_results(session, log)
 
           # Create new log for saving (remove dummy "X")
           new_log <- rbindlist(list(state$saved_log, log))

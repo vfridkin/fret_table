@@ -68,6 +68,16 @@ Shiny.addCustomMessageHandler(
   }
 );
 
+// Inject results into fret coordinate
+Shiny.addCustomMessageHandler("add_result_to_fret", function (input) {
+  const coord = `${input.coord}`;
+  if (input.inject_html != "") {
+    $(".result-note").remove();
+    $(coord).append(input.inject_html);
+    $(".result-note").siblings().hide();
+  }
+});
+
 // Letter visibility
 Shiny.addCustomMessageHandler("Learn_letters_visibility", function (visible) {
   const letters = `.learn-letter`;
@@ -75,7 +85,6 @@ Shiny.addCustomMessageHandler("Learn_letters_visibility", function (visible) {
 });
 
 // Highlight letters
-
 Shiny.addCustomMessageHandler("letter_add_highlight", function (input) {
   const button = `.${input.letter_class}`;
   $(button).css("background", input.highlight_colour);

@@ -254,3 +254,51 @@ fret_visible_from_fretboard <- function(session,
         role = role
     )
 }
+
+show_game_results <- function(session, log) {
+    # Seperate true and false answers into columns
+    wide_log <- log[, .(row, column, correct)] %>%
+        dcast(
+            row + column ~ correct,
+            fun.aggregate = length
+        )
+    names(wide_log) %<>% tolower()
+
+    1:nrow(wide_log) %>% walk(
+        ~ wide_log[.x] %>%
+            add_result_to_fret(session)
+    )
+}
+
+add_result_to_fret <- function(result, session) {
+    string_class <- paste0(".string", result$row)
+    fret_class <- paste0(".fret", result$column - 1)
+
+    coord_class <- paste0(string_class, fret_class)
+
+    # Compile html to inject into coordinate
+    inject <- ""
+
+    has_true <- all(!is.null(result$true), result$true > 0)
+    if (has_true) {
+        num <- iff(result$true == 1, "", result$true)
+        val <- get_answer_html("TRUE", k$colour$right, num)
+        inject <- paste0(inject, val)
+    }
+
+    has_false <- all(!is.null(result$false), result$false > 0)
+    if (has_false) {
+        num <- iff(result$false == 1, "", result$false)
+        val <- get_answer_html("FALSE", k$colour$wrong, num)
+        inject <- paste0(inject, val)
+    }
+
+    # Send html to coordinate on fretboard
+    session$sendCustomMessage(
+        "add_result_to_fret",
+        list(
+            coord = coord_class,
+            inject_html = inject
+        )
+    )
+}

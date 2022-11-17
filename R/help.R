@@ -63,9 +63,11 @@ help_steps <- function() {
     ) %>% as.character()
 
     letters_div <- div(
-        p("In Learn mode hover to view note names."),
-        p("To switch between sharps and flats showing for enharmonic notes,
-        use the switch on the bottom right."),
+        p("In Learn mode hover over the buttons to view related notes
+         in the fret above."),
+        p("All(x) buttons show all notes and accidentals of type x."),
+        p("When not learning, buttons not referring to a single
+        note are hidden.")
     ) %>% as.character()
 
 

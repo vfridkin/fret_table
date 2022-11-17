@@ -10,6 +10,15 @@ make_log_row <- function(question, response, source, start_time, play_time) {
     fn <- iff(source == "letter", include_enharmonics, fret_to_note)
     response_note <- response %>% fn()
 
+    # Add coordinates if clicking on the fret
+    if (source == "fret") {
+        log_row$row <- response$row
+        log_row$column <- response$fret %>%
+            str_replace("fret", "") %>%
+            as.integer() %>%
+            "+"(1)
+    }
+
     log_row[, correct := (question$note %in% response_note)]
     log_row[, start_time := start_time]
     log_row[, play_time := play_time]

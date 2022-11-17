@@ -29,16 +29,8 @@ k <- tibble::lst(
   string_thickness = c(1, 1, 2, 2, 3, 4),
   string_rotation = c(0, 1, 2, -2, -1, 0),
   answer_html = list(
-    "TRUE" = glue("
-          <span style = '
-          color: {colour$right};
-          padding: 0;
-          '>♪</span>"),
-    "FALSE" = glue("
-          <span style = '
-            color: {colour$wrong};
-            padding: 0;
-          '>×</span>")
+    "TRUE" = get_answer_html("TRUE", colour$right),
+    "FALSE" = get_answer_html("FALSE", colour$wrong)
   ),
   letter_min_width = 70,
   letter_max_width = 120
