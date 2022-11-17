@@ -70,12 +70,14 @@ Shiny.addCustomMessageHandler(
 
 // Inject results into fret coordinate
 Shiny.addCustomMessageHandler("add_result_to_fret", function (input) {
-  const coord = `${input.coord}`;
+  const coord = `${input.coord} .rt-td-inner`;
   if (input.inject_html != "") {
-    $(".result-note").remove();
     $(coord).append(input.inject_html);
-    $(".result-note").siblings().hide();
   }
+});
+
+Shiny.addCustomMessageHandler("clear_game_results", function (input) {
+  $(".result-note").remove();
 });
 
 // Letter visibility

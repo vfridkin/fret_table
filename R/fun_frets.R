@@ -270,6 +270,10 @@ show_game_results <- function(session, log) {
     )
 }
 
+clear_game_results <- function(session) {
+    session$sendCustomMessage("clear_game_results", "")
+}
+
 add_result_to_fret <- function(result, session) {
     string_class <- paste0(".string", result$row)
     fret_class <- paste0(".fret", result$column - 1)
@@ -278,7 +282,6 @@ add_result_to_fret <- function(result, session) {
 
     # Compile html to inject into coordinate
     inject <- ""
-
     has_true <- all(!is.null(result$true), result$true > 0)
     if (has_true) {
         num <- iff(result$true == 1, "", result$true)
@@ -293,12 +296,17 @@ add_result_to_fret <- function(result, session) {
         inject <- paste0(inject, val)
     }
 
+    inject_html <- glue("
+        <span class='result-note'>
+            {inject}
+        </span>")
+
     # Send html to coordinate on fretboard
     session$sendCustomMessage(
         "add_result_to_fret",
         list(
             coord = coord_class,
-            inject_html = inject
+            inject_html = inject_html
         )
     )
 }

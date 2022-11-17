@@ -33,6 +33,7 @@ set_state_learning <- function(session) {
     state$play_turn <- 0
     state$temp_log <- create_new_log()
     Learn_letters_visibility(session, TRUE)
+    clear_game_results(session)
 }
 
 set_state_playing <- function(session) {
@@ -44,6 +45,7 @@ set_state_playing <- function(session) {
     state$start_time <- Sys.time()
     state$temp_log <- create_new_log()
     Learn_letters_visibility(session, FALSE)
+    clear_game_results(session)
 }
 
 set_state_completed <- function(session) {
