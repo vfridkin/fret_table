@@ -8,6 +8,10 @@ $(function () {
     if (plectrum) {
       $("#main-control-control_div").toggle();
       $("#main-performance-performance_div").toggle();
+      const dt = new Date();
+      Shiny.setInputValue("main-performance-plectrum", dt, {
+        priority: "event",
+      });
     }
   }); // click
 

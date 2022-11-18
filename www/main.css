@@ -50,8 +50,12 @@ body {
 
 /* Performance ---------------------------------------------------------------*/
 
-#main-performance-performance_div {
+#main-control-control_div {
   display: none;
+}
+
+#main-performance-performance_div {
+  /* display: none; */
 }
 
 
