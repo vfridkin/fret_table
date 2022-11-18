@@ -122,7 +122,7 @@ note_visibility <- function(session,
 }
 
 #' Remove all question notes - do this after each game
-clear_question_notes <- function(session) {
+clear_questions <- function(session) {
     session$sendCustomMessage(
         "clear_questions", ""
     )
@@ -154,6 +154,9 @@ note_visibility_by_accidental <- function(session, visible, letter, accidental) 
 #' fret_visible_from_letter(display = "f_sharp")
 #'
 fret_visible_from_letter <- function(session, display) {
+    # Hide all highlights by default
+    clear_questions(session)
+
     # Hide all dots by default
     dot_visibility(session, FALSE)
 
@@ -225,8 +228,9 @@ fret_visible_from_fretboard <- function(session,
                                         display,
                                         accidental,
                                         role = "display") {
-    # Hide all dots by default
+    # Hide all dots and questions
     dot_visibility(session, FALSE)
+    clear_questions(session)
 
     # Guard nothing to display
     nothing_to_display <- any(
@@ -248,5 +252,61 @@ fret_visible_from_fretboard <- function(session,
         fret = display$fret,
         accidental = accidental,
         role = role
+    )
+}
+
+show_game_results <- function(session, log) {
+    # Seperate true and false answers into columns
+    wide_log <- log[, .(row, column, correct)] %>%
+        dcast(
+            row + column ~ correct,
+            fun.aggregate = length
+        )
+    names(wide_log) %<>% tolower()
+
+    1:nrow(wide_log) %>% walk(
+        ~ wide_log[.x] %>%
+            add_result_to_fret(session)
+    )
+}
+
+clear_game_results <- function(session) {
+    session$sendCustomMessage("clear_game_results", "")
+}
+
+add_result_to_fret <- function(result, session) {
+    string_class <- paste0(".string", result$row)
+    fret_class <- paste0(".fret", result$column - 1)
+
+    coord_class <- paste0(string_class, fret_class)
+
+    # Compile html to inject into coordinate
+    inject <- ""
+    has_true <- all(!is.null(result$true), result$true > 0)
+    if (has_true) {
+        num <- iff(result$true == 1, "", result$true)
+        val <- get_answer_html("TRUE", k$colour$right, num)
+        inject <- paste0(inject, val)
+    }
+
+    has_false <- all(!is.null(result$false), result$false > 0)
+    if (has_false) {
+        num <- iff(result$false == 1, "", result$false)
+        val <- get_answer_html("FALSE", k$colour$wrong, num)
+        inject <- paste0(inject, val)
+    }
+
+    inject_html <- glue("
+        <span class='result-note'>
+            {inject}
+        </span>")
+
+    # Send html to coordinate on fretboard
+    session$sendCustomMessage(
+        "add_result_to_fret",
+        list(
+            coord = coord_class,
+            inject_html = inject_html
+        )
     )
 }

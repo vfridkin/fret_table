@@ -13,12 +13,14 @@ letters_ui <- function(id) {
   width <- 8
 
   div(
-    id = ns("piano"),
     style = "margin-top: 0px; width: 100vw; padding: 1vw;",
-    in_row(reactableOutput(ns("title_rt")), width),
-    in_row(reactableOutput(ns("sharps_rt")), width),
-    in_row(reactableOutput(ns("naturals_rt")), width),
-    in_row(reactableOutput(ns("flats_rt")), width)
+    div(
+      id = ns("letters_div"),
+      in_row(reactableOutput(ns("title_rt")), width),
+      in_row(reactableOutput(ns("sharps_rt")), width),
+      in_row(reactableOutput(ns("naturals_rt")), width),
+      in_row(reactableOutput(ns("flats_rt")), width)
+    )
   )
 }
 
@@ -28,13 +30,8 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
     function(input, output, session) {
       ns <- session$ns
 
-      m <- reactiveValues(
-        run_once = TRUE
-      )
-
       output$title_rt <- renderReactable({
         # Titles - in order to align with table
-
         title <- get_state_title(state)
 
         list(
@@ -47,6 +44,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
       })
 
       output$sharps_rt <- renderReactable({
+        message("Rendering sharps_rt")
         # C♯ -> A♯
         list(
           edgekey1 = "",
@@ -155,16 +153,11 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
                 )
               }
               if (is_key) {
-                # Hide 'all_' buttons when playing
-                is_visible <- any(!is_all, state$is_learning)
-                visibility <- iff(is_visible, "visible", "hidden")
-
                 is_accidental <- str_detect(name, "sharp|flat")
 
                 background_index <- iff(is_accidental, "accidental", "natural")
                 background_index <- iff(is_plus, "all", background_index)
                 text_index <- iff(is_accidental, "natural", "accidental")
-                # text_index <- iff(is_plus, "accidental", text_index)
 
                 background_colour <- k$colour[[background_index]]
                 text_colour <- k$colour[[text_index]]
@@ -174,15 +167,19 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
 
                 res <- colDef(
                   cell = function(value, rowIndex, colName) {
+                    note <- letter_to_note(colName)
+                    accidental <- colName %>%
+                      strsplit("_") %>%
+                      pluck(1, 2)
+                    letter_class <- glue("letter {note}-letter {accidental}-letter")
                     as.character(tags$div(
                       style = "height: 100%; width: 100%;",
                       tags$button(
                         value,
-                        class = "letter",
+                        class = letter_class,
                         style = paste0(
                           "--letter-background-colour:", background_colour,
-                          "; --letter-text-colour: ", text_colour,
-                          "; visibility: ", visibility
+                          "; --letter-text-colour: ", text_colour
                         ),
                         onmouseover =
                           sprintf(
@@ -210,6 +207,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
           set_names(names(notes))
       }
 
+      ## LEARNING --------------------------------------------------------------
       # Observe letter buttons -------------------------------------------------
       observeEvent(
         input$letter_hover,
@@ -220,14 +218,38 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
         }
       )
 
+      ## PLAYING ---------------------------------------------------------------
+      # > Observe letter buttons -----------------------------------------------
       observeEvent(
         input$letter_click,
         {
           req(state$is_playing)
-          state$letter_select <- input$letter_click
+          state$letter_select <- list(
+            val = input$letter_click,
+            time = Sys.time()
+          )
           state$input_source <- "letter"
         }
-      )
+      ) # observeEvent
+
+      # > Display question -----------------------------------------------------
+      observeEvent(
+        state$question,
+        {
+          if (state$is_playing) {
+            question <- state$question
+
+            # Display letter when player has to choose the matching fret
+            req(question$type == "note_fret")
+
+            letter_highlight(
+              session,
+              question$note,
+              role = "question"
+            )
+          }
+        }
+      ) # observeEvent
     } # function
   ) # moduleServer
 } # letters_server

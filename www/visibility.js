@@ -1,4 +1,22 @@
-// Visibility
+// Selectize disable
+Shiny.addCustomMessageHandler("selectize_disable", function (disable) {
+  disable
+    ? $(".selectized").each(function (i, obj) {
+        obj.selectize.disable();
+      })
+    : $(".selectized").each(function (i, obj) {
+        obj.selectize.enable();
+      });
+});
+
+// Fret Visibility
+Shiny.addCustomMessageHandler("clear_questions", function (input) {
+  $(".question-note").remove();
+  $(".dot").css("background", "");
+  $(".letter").css("background", "");
+  $(".letter").css("color", "");
+});
+
 Shiny.addCustomMessageHandler("dot_all_visibility", function (visible) {
   console.log(`dot_all_visibility ${visible}`);
   visible ? $(".dot").show() : $(".dot").hide();
@@ -61,7 +79,27 @@ Shiny.addCustomMessageHandler(
   }
 );
 
-Shiny.addCustomMessageHandler("clear_questions", function (input) {
-  $(".question-note").remove();
-  $(".dot").css("background", "");
+// Inject results into fret coordinate
+Shiny.addCustomMessageHandler("add_result_to_fret", function (input) {
+  const coord = `${input.coord} .rt-td-inner`;
+  if (input.inject_html != "") {
+    $(coord).append(input.inject_html);
+  }
+});
+
+Shiny.addCustomMessageHandler("clear_game_results", function (input) {
+  $(".result-note").remove();
+});
+
+// Letter visibility
+Shiny.addCustomMessageHandler("Learn_letters_visibility", function (visible) {
+  const letters = `.learn-letter`;
+  visible ? $(letters).show() : $(letters).hide();
+});
+
+// Highlight letters
+Shiny.addCustomMessageHandler("letter_add_highlight", function (input) {
+  const button = `.${input.letter_class}`;
+  $(button).css("background", input.highlight_colour);
+  $(button).css("color", input.colour);
 });

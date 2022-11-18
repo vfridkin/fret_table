@@ -133,15 +133,43 @@ as_note_text <- function(note) {
 }
 
 letter_to_note <- function(letter) {
-  split <- strsplit(letter, "_") %>% pluck(1)
-  accidental <- split[2] %>%
-    str_replace("flat", "p") %>%
-    str_replace("sharp", "q") %>%
-    str_replace("natural", "")
-  
-  note_name <- toupper(split[1])
-  paste0(note_name, accidental)
+    split <- strsplit(letter, "_") %>% pluck(1)
+    accidental <- split[2] %>%
+        str_replace("flat", "p") %>%
+        str_replace("sharp", "q") %>%
+        str_replace("natural", "")
+
+    note_name <- toupper(split[1])
+
+    # Handle learning letters - have 'all' in their name
+    is_learn_letter <- str_detect(note_name, "ALL")
+
+    note <- iff(
+        is_learn_letter,
+        "learn",
+        paste0(note_name, accidental)
+    )
+
+    note
 }
+
+fret_to_note <- function(coord) {
+    valid <- all(
+        !is.null(coord$row),
+        !is.null(coord$fret)
+    )
+
+    if (!valid) {
+        return(NULL)
+    }
+
+    open_note <- k$open_notes[coord$row]
+    interval <- coord$fret %>%
+        str_replace("fret", "") %>%
+        as.integer()
+    next_note(open_note, interval)
+}
+
 
 as_note_html <- function(note) {
     # Guard empty notes
@@ -215,3 +243,22 @@ as_note_html <- function(note) {
 }
 
 as_note_html_v <- Vectorize(as_note_html)
+
+# Return note with its enharmonic equivalent
+include_enharmonics <- function(note) {
+    # Length not 2 is a natural or something weird, so gaurd it
+    if (nchar(note) != 2) {
+        return(note)
+    }
+
+    note_split <- strsplit(note, "") %>% pluck(1)
+    accidental <- note_split[2]
+    interval <- iff(accidental == "q", 1, -1)
+
+    enharmonic <- list(
+        letter = next_note(note, interval),
+        accidental = iff(accidental == "q", "p", "q")
+    ) %>% paste(collapse = "")
+
+    c(note, enharmonic)
+}

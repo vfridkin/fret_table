@@ -1,3 +1,12 @@
+
+my performance popup triggered by clicking on performance pick
+indicate correct when clicking note during play
+Read me help
+create questions based on settings and log
+design questions from game settings
+- rules for selecting questions
+  - weighted on incorrect responses
+
 OK change learn from selectize to buttons with same rules
 OK transport buttons change state
 OK state play activates timer
@@ -8,8 +17,6 @@ OK - all naturals
 OK - all flats
 OK - all of a single note
 OK - one single note
-playing state....
-
 OK - init score
 OK - create questions
 OK - create questions on start new game
@@ -17,18 +24,16 @@ OK - ask letter questions (indicate fret, respond with letter)
 OK save question and response in log 
 OK show right or wrong
 OK design game log dataframe
+OK ask fret questions (indicate letter, respond on fret)
+OK Change logs to be states 
+OK Fix bug with letter still question mode when changing to fret mode
+OK Fix bug with ambiguous letter
+OK Fix ensure at least one game and range selection
+OK inline help
+OK 'my performance' - change pick picture to have this writing instead
+OK Fix repeat fret or letter selection - not registering
+OK show results after game
+OK Disable/enable selectize on game state
 
-ask fret questions (indicate letter, respond on fret)
-show results after game
 
-game settings -> state
-
-design questions from game settings
-- rules for selecting questions
-  - weighted on incorrect responses
-  - 
-
-'my performance' - change pick picture to have this writing instead
-my performance popup triggered by clicking on performance pick
-create questions based on settings and log
- 
+80 + 50 + 290 = 420 

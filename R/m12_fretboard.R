@@ -5,24 +5,28 @@ fretboard_ui <- function(id) {
   ns <- NS(id)
 
   tagList(
-    fluidRow(
-      style = "margin-top: 30px;",
-      reactableOutput(ns("fretboard_rt"))
-    ), # Row
-    fluidRow(
-      style = "margin-top: 3px; height: 5px; z-index: 10;",
-      column(
-        offset = 4,
-        width = 4,
-        align = "center",
-        uiOutput(ns("completed_choices_ui"))
-      ),
-      column(
-        width = 4,
-        align = "right",
-        uiOutput(ns("default_accidental_ui"))
-      )
-    )
+    div(
+      id = "fretboard_div",
+      fluidRow(
+        style = "margin-top: 30px;",
+        reactableOutput(ns("fretboard_rt"))
+      ), # Row
+      fluidRow(
+        column(
+          style = "margin-top: 3px; height: 5px; z-index: 10;",
+          offset = 4,
+          width = 4,
+          align = "center",
+          uiOutput(ns("completed_choices_ui"))
+        ),
+        column(
+          style = "margin-top: 3px; height: 5px; z-index: 10;",
+          width = 4,
+          align = "right",
+          uiOutput(ns("default_accidental_ui"))
+        )
+      ) # fluidRow
+    ) # div
   ) # tagList
 }
 
@@ -99,7 +103,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
                 console.log(column);
                 Shiny.setInputValue('",
             click_input,
-            "', {row: rowInfo.index + 1, col: column.id},
+            "', {row: rowInfo.index + 1, fret: column.id},
               {priority: 'event' })
               }
             }"
@@ -123,13 +127,13 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       observeEvent(input$completed_action, {
         action <- input$completed_action
-        if(action == "play") set_state_playing()
-        if(action == "learn") set_state_learning()
+        if (action == "play") set_state_playing(session)
+        if (action == "learn") set_state_learning(session)
       })
 
       # Choose the default accidental to show in the fretboard when learning
       output$default_accidental_ui <- renderUI({
-        if (state$is_learning) {
+        if (state$is_learning | state$is_completed_game) {
           radioGroupButtons(
             inputId = ns("default_accidental"),
             label = NULL,
@@ -152,7 +156,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         {
           if (state$is_learning) {
             dot_visibility(session, FALSE)
-            clear_question_notes(session)
+            clear_questions(session)
           }
         }
       )
@@ -161,7 +165,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         input$fret_cell_hover,
         {
-          req(state$is_learning)
+          req(state$is_learning | state$is_completed_game)
           cell_class <- input$fret_cell_hover
           cell_coords <- cell_class %>%
             strsplit(" ") %>%
@@ -190,7 +194,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         state$fret_select,
         {
-          if (state$is_learning) {
+          if (state$is_learning | state$is_completed_game) {
             fret_visible_from_fretboard(
               session,
               state$fret_select,
@@ -206,7 +210,10 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         input$fret_click,
         {
           req(state$is_playing)
-          state$fret_select <- input$fret_click
+          state$fret_select <- list(
+            val = input$fret_click,
+            time = Sys.time()
+          )
           state$input_source <- "fret"
         }
       )
@@ -234,7 +241,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
             )
           }
         }
-      )
+      ) # observeEvent
     } # function
   ) # moduleServer
 } # fretboard_server
