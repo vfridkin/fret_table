@@ -33,3 +33,6 @@ OK inline help
 OK 'my performance' - change pick picture to have this writing instead
 OK Fix repeat fret or letter selection - not registering
 OK show results after game
+
+
+80 + 50 + 290 = 420 

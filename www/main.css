@@ -11,6 +11,8 @@ body {
   overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
+/* Control -------------------------------------------------------------------*/
+
 .selectize-control {
   display: inline-block;
   vertical-align: middle;
@@ -22,18 +24,38 @@ body {
   white-space: nowrap;
 }
 
+#main-control-timer {
+  text-align: center;
+  width: 100%;
+}
+
 /* remove score header */
 .score-header {
   visibility: hidden;
   height: 0;
 }
 
-#main-control-timer {
-  text-align: center;
-  width: 100%;
+/* plectrum */
+#main-plectrum {
+  position: relative;
 }
 
-/* ** fret display ** */
+#main-plectrum:hover {
+  top: -2px;
+}
+
+#main-plectrum:active {
+  top: 0px;
+}
+
+/* Performance ---------------------------------------------------------------*/
+
+#main-performance-performance_div {
+  display: none;
+}
+
+
+/* ** fret display ** --------------------------------------------------------*/
 /* fret board backgrounds are x-string
    nut and frets are x-string::before
    strings are x-string::after */
@@ -224,7 +246,8 @@ body {
   text-shadow: 1px 1px 2px white, 2px 2px 3px black;
 }
 
-/* Footer ---------------------------------------------------------------------------------------*/
+
+/* Footer --------------------------------------------------------------------*/
 
 .footer {
   position: absolute;

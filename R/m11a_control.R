@@ -14,8 +14,7 @@ control_ui <- function(id) {
 
   tagList(
     div(
-      id = "control_div",
-      div(style = "margin-top: 5px;"),
+      id = ns("control_div"),
       div(
         style = "
         display: inline-block;
@@ -52,17 +51,17 @@ control_ui <- function(id) {
         transport_button(ns("stop_button"),
           "stop",
           style = glue("
-        height: 35px;
-        color: {k$colour$button_text};
-        background-color: {k$colour$button_stop};
-        ")
+            height: 35px;
+            color: {k$colour$button_text};
+            background-color: {k$colour$button_stop};
+          ")
         )
       ),
       div(
         style = "
-        display: inline-block;
-        width: -webkit-calc(100vw - 290px);
-        height: 50px;
+          display: inline-block;
+          width: -webkit-calc(100vw - 310px);
+          height: 50px;
         ",
         fillRow(
           flex = c(5, 3, 3),
@@ -102,19 +101,6 @@ control_ui <- function(id) {
             reactableOutput(ns("score"), width = "100%")
           )
         ) # Row
-      ) # div
-      , div(
-        style = "
-      display: inline-block;
-      width: 70px;
-      vertical-align: top;
-      margin-left: -20px
-      ",
-        img(
-          height = 100,
-          src = "plectrum.png",
-          alt = "My Performance Image"
-        )
       ) # div
     ) # div
   ) # tagList

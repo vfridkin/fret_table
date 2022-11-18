@@ -3,7 +3,7 @@ main_ui <- function(id) {
 
   tagList(
     div(
-      style = "text-align: center;",
+      style = "text-align: center; margin-top: 40px;",
       class = "header__text-box",
       h1(
         style = "
@@ -12,10 +12,32 @@ main_ui <- function(id) {
         "Fret Table🎸"
       )
     ),
-    control_ui(ns("control")),
+    div(
+      style = "
+        display: inline-block;
+        margin-top: 5px;
+        height: 100px;
+        width: -webkit-calc(100vw - 160px);
+      ",
+      control_ui(ns("control")),
+      performance_ui(ns("performance")),
+    ),
+    div(
+      id = ns("plectrum"),
+      style = "
+          display: inline-block;
+          width: 70px;
+          vertical-align: top;
+          margin-left: -20px
+        ",
+      img(
+        height = 100,
+        src = "plectrum.png",
+        alt = "My Performance Image"
+      )
+    ), # div
     fretboard_ui(ns("fretboard")),
     letters_ui(ns("letters")),
-    performance_ui(ns("performance")),
     footer_element()
   )
 }

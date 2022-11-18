@@ -3,7 +3,6 @@ performance_ui <- function(id) {
 
     div(
         id = ns("performance_div"),
-        style = "margin-top: 0px; width: 100vw; padding: 1vw;",
         echarts4rOutput(ns("performance_chart"))
     )
 }

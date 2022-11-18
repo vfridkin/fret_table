@@ -34,6 +34,7 @@ set_state_learning <- function(session) {
     state$temp_log <- create_new_log()
     Learn_letters_visibility(session, TRUE)
     clear_game_results(session)
+    selectize_disable(session, FALSE)
 }
 
 set_state_playing <- function(session) {
@@ -46,6 +47,7 @@ set_state_playing <- function(session) {
     state$temp_log <- create_new_log()
     Learn_letters_visibility(session, FALSE)
     clear_game_results(session)
+    selectize_disable(session, TRUE)
 }
 
 set_state_completed <- function(session) {
@@ -54,4 +56,9 @@ set_state_completed <- function(session) {
     state$is_completed_game <- TRUE
     clear_questions(session)
     dot_visibility(session, FALSE)
+    selectize_disable(session, FALSE)
+}
+
+selectize_disable <- function(session, disable) {
+    session$sendCustomMessage("selectize_disable", disable)
 }

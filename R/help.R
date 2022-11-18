@@ -86,7 +86,7 @@ help_steps <- function() {
         ),
         element = c(
             ".header__text-box",
-            "#control_div",
+            "#main-control-control_div",
             "#fretboard_div",
             "#main-letters-letters_div"
         )

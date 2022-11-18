@@ -1,4 +1,15 @@
-// Visibility
+// Selectize disable
+Shiny.addCustomMessageHandler("selectize_disable", function (disable) {
+  disable
+    ? $(".selectized").each(function (i, obj) {
+        obj.selectize.disable();
+      })
+    : $(".selectized").each(function (i, obj) {
+        obj.selectize.enable();
+      });
+});
+
+// Fret Visibility
 Shiny.addCustomMessageHandler("clear_questions", function (input) {
   $(".question-note").remove();
   $(".dot").css("background", "");
