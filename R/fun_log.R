@@ -47,6 +47,7 @@ save_log <- function(session, data) {
 }
 
 load_saved_log <- function(session) {
+  browser()
     log <- get_local_storage("log", session)
     no_log <- is.null(log)
 

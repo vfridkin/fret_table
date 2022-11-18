@@ -58,6 +58,34 @@ body {
   /* display: none; */
 }
 
+.kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 110px;
+  margin-bottom: .75rem;
+  padding: 1rem 1.5rem 0 1.5rem;
+  text-align: center;
+}
+
+.kpi__value {
+  margin-top: 0rem;
+  margin-bottom: .0rem;
+  font-size: 5rem;
+  line-height: 1;
+  
+  small {
+    font-size: .5em;
+  }
+  
+}
+
+.kpi__description {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+
 
 /* ** fret display ** --------------------------------------------------------*/
 /* fret board backgrounds are x-string
