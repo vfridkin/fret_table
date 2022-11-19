@@ -47,14 +47,5 @@ save_log <- function(session, data) {
 }
 
 load_saved_log <- function(session) {
-  browser()
-    log <- get_local_storage("log", session)
-    no_log <- is.null(log)
-
-    # If log doesn't exist, create a new one
-    if (no_log) {
-        log <- create_new_log()
-    }
-
-    log
+    get_local_storage("log", session)
 }

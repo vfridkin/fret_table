@@ -50,21 +50,21 @@ body {
 
 /* Performance ---------------------------------------------------------------*/
 
-#main-control-control_div {
+/* #main-control-control_div {
   display: none;
-}
+} */
 
 #main-performance-performance_div {
-  /* display: none; */
+  display: none;
 }
 
 .kpi {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 110px;
-  margin-bottom: .75rem;
-  padding: 1rem 1.5rem 0 1.5rem;
+  height: 100px;
+  margin-bottom: 0rem;
+  padding: 2rem 1.5rem 0 1.5rem;
   text-align: center;
 }
 
@@ -73,10 +73,6 @@ body {
   margin-bottom: .0rem;
   font-size: 5rem;
   line-height: 1;
-  
-  small {
-    font-size: .5em;
-  }
   
 }
 

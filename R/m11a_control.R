@@ -124,7 +124,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
       observeEvent(m$run_once,
         {
-          state$saved_log <- load_saved_log(session)
+          load_saved_log(session)
         },
         once = TRUE
       )
@@ -383,6 +383,8 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           )
         )
       })
+
+      return(reactive(state$saved_log))
     } # function
   ) # moduleServer
 } # control_server

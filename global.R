@@ -26,6 +26,7 @@ library(magrittr)
 library(jsonlite)
 library(rintrojs)
 library(lubridate)
+library(scales)
 
 # Load app config - sources YAML and CSV files
 source("R/load_config.R")

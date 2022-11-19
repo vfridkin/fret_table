@@ -31,7 +31,7 @@ main_ui <- function(id) {
           margin-left: -20px
         ",
       img(
-        height = 100,
+        height = 115,
         src = "plectrum.png",
         alt = "My Performance Image"
       )
@@ -47,6 +47,28 @@ main_server <- function(id, k_) {
     id,
     function(input, output, session) {
       ns <- session$ns
+
+      observeEvent(
+        input$local_storage,
+        {
+          log <- input$local_storage
+          no_log <- is.null(log)
+
+          # If log doesn't exist, create a new one
+          if (no_log) {
+            log <- create_new_log()
+          }
+          log <- log %>%
+            map(fromJSON) %>%
+            pluck(1) %>%
+            setDT()
+
+          # Time column class
+          log[, start_time := as.POSIXct(start_time)]
+
+          state$saved_log <- log
+        }
+      )
 
       control_server("control", "k_")
       fretboard_server("fretboard", "k_")
