@@ -3,7 +3,6 @@ Hide play again in performance view
 Change message to 'My performance' in performance view
 Show performance in letters
 
-
 indicate correct when clicking note during play
 Read me help
 create questions based on settings and log

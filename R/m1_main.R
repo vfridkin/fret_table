@@ -85,6 +85,15 @@ main_server <- function(id, k_) {
         }
       )
 
+      # Update performance data
+      observeEvent(
+        state$saved_log,
+        {
+          state$performance_data <- state$saved_log %>%
+            make_performance_data()
+        }
+      )
+
       control_server("control", "k_")
       fretboard_server("fretboard", "k_")
       letters_server("letters", "k_")

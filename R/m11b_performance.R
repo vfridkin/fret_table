@@ -4,7 +4,8 @@ performance_ui <- function(id) {
   div(
     id = ns("performance_div"),
     fillRow(
-      flex = c(1.2, 1, 1, 3),
+      flex = c(0.5, 1.2, 1, 1, 3),
+      p(),
       uiOutput(ns("accuracy_kpi")),
       uiOutput(ns("games_kpi")),
       uiOutput(ns("questions_kpi")),
@@ -24,81 +25,18 @@ performance_server <- function(id, k_, r_ = reactive(NULL)) {
         log_record = NULL
       )
 
-      pdata <- eventReactive(
-        state$saved_log,
-        {
-          df <- state$saved_log
-
-          no_saved_data <- any(is.null(df), nrow(df) == 0)
-
-          if (no_saved_data) {
-            return(
-              list(
-                chart_data = NULL,
-                accuracy = 0,
-                games = 0,
-                questions = 0
-              )
-            )
-          }
-
-          # Questions
-          questions <- nrow(df)
-
-          # Chart data
-          chart_data <- df[
-            , .(
-              accuracy = sum(correct) / .N,
-              speed = .N / max(play_time)
-            ),
-            by = start_time
-          ][, game := .I]
-
-          # Accuracy
-          accuracy <- sum(df$correct) / questions
-
-          # Games
-          games <- max(chart_data$game)
-
-          # Frets
-          fret_data <- df[
-            , .(
-              accuracy = sum(correct) / .N,
-              count = .N
-            ),
-            by = .(row, column)
-          ]
-
-          # Letters
-          letter_data <- df[
-            , .(
-              accuracy = sum(correct) / .N,
-              count = .N
-            ),
-            by = .(note)
-          ]
-
-          list(
-            chart_data = chart_data,
-            accuracy = accuracy,
-            games = games,
-            questions = questions
-          )
-        }
-      )
-
       output$accuracy_kpi <- renderUI({
-        value <- pdata()$accuracy %>% percent()
+        value <- state$performance_data$accuracy %>% percent()
         kpi(value, "Accuracy")
       })
 
       output$games_kpi <- renderUI({
-        value <- pdata()$games
+        value <- state$performance_data$games
         kpi(value, "Games")
       })
 
       output$questions_kpi <- renderUI({
-        value <- pdata()$questions
+        value <- state$performance_data$questions
         kpi(value, "Questions")
       })
 
@@ -116,7 +54,7 @@ performance_server <- function(id, k_, r_ = reactive(NULL)) {
       output$performance_chart <- renderEcharts4r({
         message("render chart")
 
-        df <- pdata()$chart_data
+        df <- state$performance_data$chart_data %>% req()
 
         df %>%
           e_charts(game) %>%

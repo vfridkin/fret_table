@@ -11,7 +11,8 @@ state <- reactiveValues(
     letter_select = NULL,
     input_source = NULL,
     saved_log = NULL,
-    temp_log = NULL
+    temp_log = NULL,
+    performance_data = NULL
 )
 
 get_state_title <- function(state) {
