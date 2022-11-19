@@ -49,7 +49,7 @@ performance_server <- function(id, k_, r_ = reactive(NULL)) {
           chart_data <- df[
             , .(
               accuracy = sum(correct) / .N,
-              speed = max(play_time) / .N
+              speed = .N / max(play_time)
             ),
             by = start_time
           ][, game := .I]
