@@ -9,7 +9,7 @@ $(function () {
       $("#main-control-control_div").toggle();
       $("#main-performance-performance_div").toggle();
       const dt = new Date();
-      Shiny.setInputValue("main-performance-plectrum", dt, {
+      Shiny.setInputValue("main-plectrum", dt, {
         priority: "event",
       });
     }

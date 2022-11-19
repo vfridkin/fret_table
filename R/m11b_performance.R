@@ -60,6 +60,24 @@ performance_server <- function(id, k_, r_ = reactive(NULL)) {
           # Games
           games <- max(chart_data$game)
 
+          # Frets
+          fret_data <- df[
+            , .(
+              accuracy = sum(correct) / .N,
+              count = .N
+            ),
+            by = .(row, column)
+          ]
+
+          # Letters
+          letter_data <- df[
+            , .(
+              accuracy = sum(correct) / .N,
+              count = .N
+            ),
+            by = .(note)
+          ]
+
           list(
             chart_data = chart_data,
             accuracy = accuracy,

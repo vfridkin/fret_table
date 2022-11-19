@@ -70,6 +70,21 @@ main_server <- function(id, k_) {
         }
       )
 
+      observeEvent(
+        input$plectrum,
+        {
+          if (!state$is_performance) {
+            set_state_performance(session)
+            return()
+          }
+
+          if (state$is_performance) {
+            set_state_learning(session)
+            return()
+          }
+        }
+      )
+
       control_server("control", "k_")
       fretboard_server("fretboard", "k_")
       letters_server("letters", "k_")
