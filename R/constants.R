@@ -1,5 +1,7 @@
 k <- tibble::lst(
   colour = list(
+    fretboard = "#7c5e32",
+    headstock = "#e59317",
     button_text = "#f5ebe0",
     button_play = "#06d6a0",
     button_info = "#073b4c",
@@ -15,7 +17,10 @@ k <- tibble::lst(
     display = "#8B8984",
     question = "#ffd166",
     right = "#06d6a0",
-    wrong = "#ef476f"
+    wrong = "#ef476f",
+    nothing = "#D3D3D3",
+    accuracy = "#06d6a0",
+    speed = "#d6a006"
   ),
   default_turns = 5,
   max_saved_games = 100,

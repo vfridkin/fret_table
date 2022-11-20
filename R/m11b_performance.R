@@ -59,13 +59,13 @@ performance_server <- function(id, k_, r_ = reactive(NULL)) {
         df %>%
           e_charts(game) %>%
           e_line(accuracy,
-            animation = FALSE, symbol = NULL, color = "green",
-            endLabel = list(show = TRUE, formatter = "accuracy", color = "green"),
+            animation = FALSE, symbol = NULL, color = k$colour$accuracy,
+            endLabel = list(show = TRUE, formatter = "accuracy", color = k$colour$accuracy),
             labelLayout = list(moveOverlap = "shiftY")
           ) %>%
           e_line(speed,
-            animation = FALSE, symbol = NULL, color = "blue",
-            endLabel = list(show = TRUE, formatter = "speed", color = "blue"),
+            animation = FALSE, symbol = NULL, color = k$colour$speed,
+            endLabel = list(show = TRUE, formatter = "speed", color = k$colour$speed),
             labelLayout = list(moveOverlap = "shiftY")
           ) %>%
           e_legend(show = FALSE) %>%

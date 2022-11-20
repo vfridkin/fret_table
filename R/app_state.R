@@ -63,6 +63,7 @@ set_state_completed <- function(session) {
     state$is_playing <- FALSE
     state$is_completed_game <- TRUE
     state$is_performance <- FALSE
+    Learn_letters_visibility(session, TRUE)
     clear_questions(session)
     dot_visibility(session, FALSE)
     selectize_disable(session, FALSE)
@@ -73,6 +74,7 @@ set_state_performance <- function(session) {
     state$is_playing <- FALSE
     state$is_completed_game <- FALSE
     state$is_performance <- TRUE
+    Learn_letters_visibility(session, TRUE)
     clear_questions(session)
     dot_visibility(session, FALSE)
     selectize_disable(session, FALSE)

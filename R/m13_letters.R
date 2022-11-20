@@ -212,7 +212,7 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         input$letter_hover,
         {
-          req(state$is_learning)
+          req(!state$is_playing)
           state$letter_select <- input$letter_hover
           state$input_source <- "letter"
         }

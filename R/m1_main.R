@@ -26,13 +26,13 @@ main_ui <- function(id) {
       id = ns("plectrum"),
       style = "
           display: inline-block;
-          width: 70px;
+          width: 100px;
+          height: 120px;
           vertical-align: top;
-          margin-left: -20px
         ",
       img(
-        height = 115,
-        src = "plectrum.png",
+        height = 110, width = 100,
+        src = "plectrumb.png",
         alt = "My Performance Image"
       )
     ), # div

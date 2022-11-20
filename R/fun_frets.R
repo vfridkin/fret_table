@@ -1,3 +1,30 @@
+# fret note data without html formatting
+get_fret_note_data <- function() {
+    note_count <- length(k$open_notes)
+    rows <- 1:note_count
+
+    df <- rows %>%
+        map(
+            function(row) {
+                open_note <- k$open_notes[row]
+                string_notes_with_joined_accidentals(open_note)
+            }
+        ) %>%
+        as.data.table() %>%
+        t() %>%
+        as.data.table() %>%
+        set_names(k$fret_names)
+
+    df
+}
+
+add_fret_html <- function(df) {
+    cols <- k$fret_names
+    df <- df[, (cols) := lapply(.SD, as_note_html_v), .SDcols = cols]
+    df <- df %>% add_fret_markers()
+    df
+}
+
 add_fret_markers <- function(df) {
     fn <- function(x) paste0("<span class='fret-marker'></span>", x)
     fn2 <- function(x) paste0("<span class='fret-marker2'></span>", x)
@@ -309,4 +336,17 @@ add_result_to_fret <- function(result, session) {
             inject_html = inject_html
         )
     )
+}
+
+add_missing_coordinates <- function(df) {
+    rows <- 1:k$string_count
+    cols <- 1:(k$fret_count+1)
+
+    rows_cols <- expand.grid(
+        row = rows,
+        column = cols
+    ) %>%
+        setDT()
+
+    df <- df[rows_cols, on = .(row, column)]
 }

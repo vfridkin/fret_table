@@ -16,45 +16,49 @@ control_ui <- function(id) {
     div(
       id = ns("control_div"),
       div(
-        style = "
-        display: inline-block;
-        width: 90px;
-        vertical-align: top;
-        padding-top: 5px;
-      ",
-        transport_button(ns("play_button"), "play",
-          width = "80px",
-          style = glue("
-        height: 80px;
-        font-size: xx-large;
-        color: {k$colour$button_text};
-        background-color: {k$colour$button_play};
-        ")
-        )
-      ),
-      div(
-        style = "
-        display: inline-block;
-        width: 50px;
-        vertical-align:
-        top; padding-top: 5px;
-      ",
-        transport_button(ns("info_button"),
-          "info",
-          style = glue("
-          height: 35px;
-          color: {k$colour$button_text};
-          background-color: {k$colour$button_info};
-          font-size: larger;
-        ")
+        id = ns("transport_div"),
+        style = "display: inline-block; vertical-align: top;",
+        div(
+          style = "
+            display: inline-block;
+            width: 90px;
+            vertical-align: top;
+            padding-top: 5px;
+          ",
+          transport_button(ns("play_button"), "play",
+            width = "80px",
+            style = glue("
+              height: 80px;
+              font-size: xx-large;
+              color: {k$colour$button_text};
+              background-color: {k$colour$button_play};
+            ")
+          )
         ),
-        transport_button(ns("stop_button"),
-          "stop",
-          style = glue("
-            height: 35px;
-            color: {k$colour$button_text};
-            background-color: {k$colour$button_stop};
-          ")
+        div(
+          style = "
+            display: inline-block;
+            width: 50px;
+            vertical-align:
+            top; padding-top: 5px;
+          ",
+          transport_button(ns("info_button"),
+            "info",
+            style = glue("
+              height: 35px;
+              color: {k$colour$button_text};
+              background-color: {k$colour$button_info};
+              font-size: larger;
+            ")
+          ),
+          transport_button(ns("stop_button"),
+            "stop",
+            style = glue("
+              height: 35px;
+              color: {k$colour$button_text};
+              background-color: {k$colour$button_stop};
+            ")
+          )
         )
       ),
       div(
@@ -64,6 +68,7 @@ control_ui <- function(id) {
           height: 50px;
         ",
         fillRow(
+          id = ns("settings_div"),
           flex = c(5, 3, 3),
           inline_selector(ns("game_select"),
             game_choices, game_selected,
@@ -79,6 +84,7 @@ control_ui <- function(id) {
           )
         ) # Row
         , fillRow(
+          id = ns("timer_score_div"),
           flex = c(1, 5),
           div(
             style = "
@@ -92,12 +98,12 @@ control_ui <- function(id) {
           ),
           div(
             style = "
-            display: flex;
-            font-size: xx-large;
-            font-weight: 900;
-            margin-top: -10px;
-            padding-left: 5px;
-            ",
+              display: flex;
+              font-size: xx-large;
+              font-weight: 900;
+              margin-top: -10px;
+              padding-left: 5px;
+              ",
             reactableOutput(ns("score"), width = "100%")
           )
         ) # Row

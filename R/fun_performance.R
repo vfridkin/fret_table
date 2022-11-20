@@ -62,3 +62,12 @@ make_performance_data <- function(df) {
         questions = questions
     )
 }
+
+performance_colour <- function(x) {
+    if (is.na(x)) {
+        return("transparent")
+    }
+    rgb(colorRamp(c(k$colour$wrong, k$colour$right))(x), maxColorValue = 255)
+}
+
+performance_colour_v <- Vectorize(performance_colour)

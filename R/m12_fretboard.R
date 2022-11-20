@@ -50,54 +50,39 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       )
 
       # fret note data without html formatting
-      fret_note_data <- {
-        note_count <- length(k$open_notes)
-        rows <- 1:note_count
-
-        df <- rows %>%
-          map(
-            function(row) {
-              open_note <- k$open_notes[row]
-              string_notes_with_joined_accidentals(open_note)
-            }
-          ) %>%
-          as.data.table() %>%
-          t() %>%
-          as.data.table() %>%
-          set_names(k$fret_names)
-
-        df
-      }
+      fret_note_data <- get_fret_note_data()
 
       # fret note data with formatting
-      fret_note_html <- {
-        df <- fret_note_data
-        cols <- k$fret_names
-        df <- df[, (cols) := lapply(.SD, as_note_html_v), .SDcols = cols]
-        df <- df %>% add_fret_markers()
-        df
-      }
+      fret_note_html <- fret_note_data %>%
+        copy() %>%
+        add_fret_html()
 
       # fret performance data with formatting
       fret_performance_html <- reactive({
-        df <- state$performance_data$fret_data
+        df_narrow <- state$performance_data$fret_data
+        df_narrow <- df_narrow %>% add_missing_coordinates()
 
-        df <- df %>% add_missing_coordinates()
-        browser()
+        # Reshape to fret table
+        vars <- c("accuracy", "count")
+        clist <- vars %>%
+          map(
+            ~ dcast(df_narrow, row ~ column, value.var = .x) %>%
+              .[, row := NULL] %>%
+              set_names(k$fret_names)
+          ) %>%
+          set_names(vars)
+
+        cols <- k$fret_names
+        acolours <- clist$accuracy[, (cols) := lapply(.SD, performance_colour_v), .SDcols = cols]
+
+        # Combine colours with note names
+        df <- paste(as.matrix(fret_note_data), as.matrix(acolours)) %>%
+          matrix(nrow = k$string_count) %>%
+          as.data.table() %>%
+          set_names(k$fret_names)
+
+        df %>% add_fret_html()
       })
-
-      add_missing_coordinates <- function(df) {
-        rows <- 1:k$string_count
-        cols <- 1:k$fret_count
-
-        rows_cols <- expand.grid(
-          row = rows,
-          column = cols
-        ) %>%
-          setDT()
-
-        df <- df[rows_cols, on = .(row, column)]
-      }
 
 
       fret_html <- eventReactive(
@@ -165,7 +150,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       # Choose the default accidental to show in the fretboard when learning
       output$default_accidental_ui <- renderUI({
-        if (state$is_learning | state$is_completed_game) {
+        if (state$is_learning | state$is_completed_game | state$is_performance) {
           radioGroupButtons(
             inputId = ns("default_accidental"),
             label = NULL,
@@ -197,7 +182,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         input$fret_cell_hover,
         {
-          req(state$is_learning | state$is_completed_game)
+          req(!state$is_playing)
           cell_class <- input$fret_cell_hover
           cell_coords <- cell_class %>%
             strsplit(" ") %>%
@@ -214,7 +199,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         state$letter_select,
         {
-          if (state$is_learning) {
+          if (!state$is_playing) {
             fret_visible_from_letter(
               session,
               state$letter_select
@@ -226,7 +211,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         state$fret_select,
         {
-          if (state$is_learning | state$is_completed_game) {
+          if (!state$is_playing) {
             fret_visible_from_fretboard(
               session,
               state$fret_select,

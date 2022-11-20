@@ -88,7 +88,7 @@ body {
    nut and frets are x-string::before
    strings are x-string::after */
 .headstock-string {
-  background-color: #e59317; /* headstock background */
+  background-color: #e59317; /*  headstock background */
   border: transparent;
   position: absolute;
   height: 32px;
@@ -101,14 +101,13 @@ body {
   height: 32px;
 }
 
-.headstock-string:hover {
-  background-color:  rgba(229,147,23, 0.9)
+.guitar-string:hover, .headstock-string:hover {
+  filter: brightness(110%);
 }
 
-.guitar-string:hover {
-  background-color:  rgba(131, 98, 49, 0.9)
+.rt-td-inner {
+  padding: 0;
 }
-
 
 /* nut */
 .headstock-string::before {
@@ -268,7 +267,7 @@ body {
 .result-note {
   margin-left: -12px;
   font-size: xx-large;
-  margin-top: -13px;
+  margin-top: -40px;
   position: absolute;
   z-index: 4;
   text-shadow: 2px 2px 4px white, 4px 4px 6px black, 1px 1px 1px black, 1px 1px 1px black;
@@ -284,11 +283,11 @@ body {
   height: 20px;
   width: 100%;
   text-align: center;
+  font-size: larger;
 }
 
 .footer__text-box i {
   margin-left: 5px;
-  font-size: smaller;
   color: rgba(var(--colour-black-rgb), var(--alpha-low));
 }
 

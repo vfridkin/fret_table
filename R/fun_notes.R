@@ -178,12 +178,15 @@ as_note_html <- function(note) {
     }
 
     is_accidental <- note %>% str_detect("\\|")
+    note_split <- strsplit(note, " ") %>% pluck(1)
+    note_value <- note_split[1]
+    background_colour <- note_split[2]
 
     # Span to contain note name and classes
     note_span <- ""
 
     if (is_accidental) {
-        notes <- note %>%
+        notes <- note_value %>%
             as_note_text() %>%
             strsplit("\\|") %>%
             pluck(1)
@@ -202,12 +205,12 @@ as_note_html <- function(note) {
     }
 
     if (!is_accidental) {
-        note_class <- note %>%
+        note_class <- note_value %>%
             tolower() %>%
             paste0("-note")
         note_span <- glue("
             <span class='natural {note_class}'>
-                {note}
+                {note_value}
             </span>
             ")
     }
@@ -224,7 +227,13 @@ as_note_html <- function(note) {
     gradient_edge_colour <- fn("accidental_lighter", "natural_darker")
     dot_text_colour <- fn("natural", "accidental")
 
-    style <- paste0(
+    style_container <- glue("
+        background-color: {background_colour};
+        height: 100%;
+        width: 100%;
+    ")
+
+    style_dot <- paste0(
         "--gradient: ", gradient_colour, ";
             --gradient-edge: ", gradient_edge_colour, ";
             --dot-text: ", dot_text_colour, ";
@@ -232,8 +241,8 @@ as_note_html <- function(note) {
     )
 
     glue("
-        <div class='dot-container'>
-            <span class='dot' style ='{style}'>
+        <div class='dot-container' style = '{style_container}'>
+            <span class='dot' style ='{style_dot}'>
               <span class='dot-text'>
                 {note_span}
               </span>

@@ -33,8 +33,8 @@ help_steps <- function() {
         ),
     ) %>% as.character()
 
-    control <- div(
-        p("Start/stop the game, game settings and view performance."),
+    transport <- div(
+        p("Start/stop the game and info"),
         p(
             icon_strong("play"),
             "Press play to enter", strong("Play"), "mode and start the timer.
@@ -46,15 +46,49 @@ help_steps <- function() {
             icon_strong("stop"),
             "Press stop to enter", strong("Learn"), "mode. If pressed before
             the end of a game, progress is not saved."
-        ),
-        p(
-            "Use the drop downs customise your game."
-        ),
-        p(
-            "Click on the plectrum (far right) to view your performance over
-            multiple games."
-        ),
+        )
     ) %>% as.character()
+
+    settings <- div(
+        p("Use drop-downs to set up the (1) game type, (2) range of questions and (3) number of turns per game.  The game types are:"),
+        p(
+            strong("Click the fretboard"), " to match fret notes with highlighted letters below."
+        ),
+        p(
+            strong("Choose the letter"), " to match with the highlighted fret note."
+        ),
+        p(
+            "When there are multiple right answers (enharmonics or a letter appearing in multiple positions on the fretboards)
+            then any right answer will do."
+        )
+    ) %>% as.character()
+
+    timer_score <- div(
+        p("Game progress appears to the right of the timer."),
+        p(
+            strong(span(style = glue("color: {k$colour$right}; font-size: x-large;"), "♪")), " green notes indicate a right answer."
+        ),
+        p(
+            strong(span(style = glue("color: {k$colour$wrong}; font-size: x-large;"), "×")), " red x's indicate a wrong answer."
+        ),
+        p(
+            "When the game completes, these will appear on the fretboard."
+        )
+    ) %>% as.character()
+
+    performance <- div(
+        p("View your performance over multiple games"),
+        p(
+            "Click the plectrum to toggle between performance and learning modes."
+        ),
+        p(
+            "View your performance for up to 100 saved games, including accuracy, number of games played and questions answered."
+        ),
+        p(
+            "In performance mode, the fretboard will become an accuracy heat map.  Notes with higher accuracy are greener, lower accuracy are redder."
+        )
+    ) %>% as.character()
+
 
     fretboard <- div(
         p("In Learn mode hover to view note names."),
@@ -74,21 +108,39 @@ help_steps <- function() {
     data.frame(
         title = c(
             "Info",
-            "Game controls",
+            "Transport",
+            "Game settings",
+            "Timer and score",
+            "My performance",
             "Fretboard",
             "Letters"
         ),
         intro = c(
             info,
-            control,
+            transport,
+            settings,
+            timer_score,
+            performance,
             fretboard,
             letters_div
         ),
         element = c(
             ".header__text-box",
-            "#main-control-control_div",
+            "#main-control-transport_div",
+            "#main-control-settings_div",
+            "#main-control-timer_score_div",
+            "#main-plectrum",
             "#fretboard_div",
             "#main-letters-letters_div"
+        ),
+        position = c(
+            "bottom-middle-aligned",
+            "right",
+            "auto",
+            "auto",
+            "left",
+            "auto",
+            "auto"
         )
     )
 }
