@@ -7,6 +7,8 @@ fretboard_ui <- function(id) {
   tagList(
     div(
       id = "fretboard_div",
+      class = "noselect",
+      style = "cursor: pointer;",
       fluidRow(
         style = "margin-top: 30px;",
         reactableOutput(ns("fretboard_rt"))
