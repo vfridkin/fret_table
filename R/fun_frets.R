@@ -339,8 +339,12 @@ add_result_to_fret <- function(result, session) {
 }
 
 add_missing_coordinates <- function(df) {
+    shiny::validate(
+        need(df, "Play some games first!")
+    )
+
     rows <- 1:k$string_count
-    cols <- 1:(k$fret_count+1)
+    cols <- 1:(k$fret_count + 1)
 
     rows_cols <- expand.grid(
         row = rows,
@@ -349,4 +353,12 @@ add_missing_coordinates <- function(df) {
         setDT()
 
     df <- df[rows_cols, on = .(row, column)]
+}
+
+vibrate_string <- function(session, click) {
+    string_class <- glue(".string{click$row}")
+
+    session$sendCustomMessage(
+        "vibrate_string", string_class
+    )
 }

@@ -31,6 +31,7 @@ k <- tibble::lst(
   fret_count = 12,
   fret_names = paste0("fret", 0:fret_count),
   open_notes = c("E", "A", "D", "G", "B", "E") %>% rev(),
+  open_octaves = c(2, 2, 3, 3, 3, 4) %>% rev(),
   string_thickness = c(1, 1, 2, 2, 3, 4),
   string_rotation = c(0, 1, 2, -2, -1, 0),
   answer_html = list(

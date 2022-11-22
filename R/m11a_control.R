@@ -39,8 +39,8 @@ control_ui <- function(id) {
           style = "
             display: inline-block;
             width: 50px;
-            vertical-align:
-            top; padding-top: 5px;
+            vertical-align: top;
+            padding-top: 5px;
           ",
           transport_button(ns("info_button"),
             "info",
@@ -369,7 +369,6 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           }
 
           df <- setDT(as.list(correct))[]
-          if (ncol(df) != turns) browser()
           names(df) <- col_names
 
           df

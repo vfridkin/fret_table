@@ -31,3 +31,11 @@ $(function () {
     }
   }); // mouse over
 });
+
+Shiny.addCustomMessageHandler("vibrate_string", function (string) {
+  // $(string).addClass("vibrating");
+  $(string).addClass("vibrating");
+  setTimeout(function () {
+    $(string).removeClass("vibrating");
+  }, 200);
+});

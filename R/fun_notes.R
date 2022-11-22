@@ -271,3 +271,24 @@ include_enharmonics <- function(note) {
 
     c(note, enharmonic)
 }
+
+coord_to_letter_octave <- function(coord) {
+    interval <- coord$fret %>%
+        str_replace("fret", "") %>%
+        as.integer()
+    open_note <- k$open_notes[coord$row]
+    open_octave <- k$open_octaves[coord$row]
+
+    # Get all notes in interval to determine octave changes
+    # Use flats (consistent with audio file names)
+    notes <- 0:interval %>%
+        map_chr(~ next_note(open_note, .x) %>% tail(1))
+
+    c_count <- sum(notes == "C") - (open_note == "C")
+    octave <- open_octave + c_count
+
+    notes %>%
+        tail(1) %>%
+        str_replace("p", "b") %>%
+        paste0(octave)
+}

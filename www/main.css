@@ -150,6 +150,11 @@ body {
   position: absolute;
   z-index: 3;
   box-shadow: 0px 1px #888888;
+  transform: translateY(0);
+}
+
+.vibrating.guitar-string::after{
+  animation: vibrate .05s infinite;
 }
 
 .headstock-string::after {
@@ -157,7 +162,17 @@ body {
   transform-origin: center right;
 }
 
-
+@keyframes vibrate {
+  0% {
+      transform: translateY(-2px);
+  }
+  50% {
+      transform: translateY(2px);
+  }
+  100% {
+      transform: translateY(-2px);
+  }
+}
 
 /* fret marker */
 .fret-marker {

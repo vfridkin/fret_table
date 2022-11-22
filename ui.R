@@ -15,7 +15,8 @@
 #
 # Modules
 # > m1_main - the main screen of the app
-# > m11_control - the control bar at the top of the app
+# > m11a_control - the control bar at the top of the app
+# > m11b_performance - performance kpi and accuracy/speed chart
 # > m12_fretboard - the guitar fret in the middle (using reactable)
 # > m13_letters - the note name buttons below (using reactables)
 # > m14_info - app information and settings

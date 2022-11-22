@@ -60,6 +60,12 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       # fret performance data with formatting
       fret_performance_html <- reactive({
         df_narrow <- state$performance_data$fret_data
+
+        # Guard missing data - no games played
+        if (is.null(df_narrow)) {
+          return(fret_note_html)
+        }
+
         df_narrow <- df_narrow %>% add_missing_coordinates()
 
         # Reshape to fret table
@@ -226,9 +232,12 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         input$fret_click,
         {
+          click <- input$fret_click
+          vibrate_string(session, click)
+          browser()
           req(state$is_playing)
           state$fret_select <- list(
-            val = input$fret_click,
+            val = click,
             time = Sys.time()
           )
           state$input_source <- "fret"
