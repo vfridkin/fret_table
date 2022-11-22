@@ -33,9 +33,13 @@ $(function () {
 });
 
 Shiny.addCustomMessageHandler("vibrate_string", function (string) {
-  // $(string).addClass("vibrating");
   $(string).addClass("vibrating");
   setTimeout(function () {
     $(string).removeClass("vibrating");
   }, 200);
+});
+
+Shiny.addCustomMessageHandler("play_string", function (path) {
+  const audio = new Audio(path);
+  audio.play();
 });

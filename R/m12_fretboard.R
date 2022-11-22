@@ -234,7 +234,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         {
           click <- input$fret_click
           vibrate_string(session, click)
-          browser()
+          play_string(session, click)
           req(state$is_playing)
           state$fret_select <- list(
             val = click,

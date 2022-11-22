@@ -362,3 +362,12 @@ vibrate_string <- function(session, click) {
         "vibrate_string", string_class
     )
 }
+
+play_string <- function(session, click) {
+    audio_file <- coord_to_letter_octave(click) %>% paste0(".mp3")
+    audio_path <- file.path("audio", audio_file)
+
+    session$sendCustomMessage(
+        "play_string", audio_path
+    )
+}
