@@ -27,7 +27,7 @@ k <- tibble::lst(
   notes = c("C", "x", "D", "x", "E", "F", "x", "G", "x", "A", "x", "B"),
   completed_action_choices = set_names(c("play", "learn"), c("Play again", "Learn")),
   default_audio_choices = set_names(c("on", "off"), c("🔊", "🔇")),
-  default_accidental_choices = set_names(c("sharp", "flat"), c("♯", "♭")),
+  default_accidental_choices = set_names(c("sharp", "flat"), c("♯", "♭")), # ⊘
   string_count = 6,
   fret_count = 12,
   fret_names = paste0("fret", 0:fret_count),

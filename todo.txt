@@ -1,7 +1,4 @@
 Toggle audio
-Show performance in frets
-Hide play again in performance view
-Change message to 'My performance' in performance view
 Show performance in letters
 
 indicate correct when clicking note during play
@@ -38,9 +35,9 @@ OK 'my performance' - change pick picture to have this writing instead
 OK Fix repeat fret or letter selection - not registering
 OK show results after game
 OK Disable/enable selectize on game state
+OK Show performance in frets
 OK my performance popup triggered by clicking on performance pick
 OK vibrate and play notes on fretboard
 OK Restrict strings in play mode
-
-
-80 + 50 + 290 = 420 
+OK Hide play again in performance view
+OK Change message to 'My performance' in performance view

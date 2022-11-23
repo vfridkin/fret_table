@@ -41,6 +41,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       m <- reactiveValues(
         run_once = FALSE,
+        default_audio = NULL,
         default_accidental = NULL
       )
 
@@ -175,6 +176,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         }
       })
 
+
       # Choose the default accidental to show in the fretboard when learning
       output$default_accidental_ui <- renderUI({
         if (state$is_learning | state$is_completed_game | state$is_performance) {
@@ -190,6 +192,10 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         } else {
           NULL
         }
+      })
+
+      observeEvent(input$audio_control, {
+        m$default_audio <- input$audio_control
       })
 
       observeEvent(input$default_accidental, {
@@ -257,8 +263,10 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         input$fret_click,
         {
           click <- input$fret_click
-          vibrate_string(session, click)
-          play_string(session, click)
+          if (m$default_audio == "on") {
+            vibrate_string(session, click)
+            play_string(session, click)
+          }
           req(state$is_playing)
           state$fret_select <- list(
             val = click,
