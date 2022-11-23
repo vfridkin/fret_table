@@ -355,6 +355,22 @@ add_missing_coordinates <- function(df) {
     df <- df[rows_cols, on = .(row, column)]
 }
 
+deactivate_strings_except <- function(session, row) {
+    deactivated <- 1:k$string_count %>% .[. != row]
+    string_classes <- glue(".string{deactivated}")
+    session$sendCustomMessage(
+        "deactivate_strings", string_classes
+    )
+}
+
+activate_strings <- function(session) {
+    activated <- 1:k$string_count
+    string_classes <- glue(".string{activated}")
+    session$sendCustomMessage(
+        "activate_strings", string_classes
+    )
+}
+
 vibrate_string <- function(session, click) {
     string_class <- glue(".string{click$row}")
 

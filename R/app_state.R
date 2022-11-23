@@ -41,6 +41,7 @@ set_state_learning <- function(session) {
     state$temp_log <- create_new_log()
     Learn_letters_visibility(session, TRUE)
     clear_game_results(session)
+    activate_strings(session)
     selectize_disable(session, FALSE)
 }
 
@@ -55,6 +56,7 @@ set_state_playing <- function(session) {
     state$temp_log <- create_new_log()
     Learn_letters_visibility(session, FALSE)
     clear_game_results(session)
+    activate_strings(session)
     selectize_disable(session, TRUE)
 }
 
@@ -65,6 +67,7 @@ set_state_completed <- function(session) {
     state$is_performance <- FALSE
     Learn_letters_visibility(session, TRUE)
     clear_questions(session)
+    activate_strings(session)
     dot_visibility(session, FALSE)
     selectize_disable(session, FALSE)
 }
@@ -76,6 +79,7 @@ set_state_performance <- function(session) {
     state$is_performance <- TRUE
     Learn_letters_visibility(session, TRUE)
     clear_questions(session)
+    activate_strings(session)
     dot_visibility(session, FALSE)
     selectize_disable(session, FALSE)
 }

@@ -25,7 +25,8 @@ fretboard_ui <- function(id) {
           style = "margin-top: 3px; height: 5px; z-index: 10;",
           width = 4,
           align = "right",
-          uiOutput(ns("default_accidental_ui"))
+          uiOutput(ns("audio_control_ui"), style = "display: inline-block;"),
+          uiOutput(ns("default_accidental_ui"), style = "display: inline-block;")
         )
       ) # fluidRow
     ) # div
@@ -46,6 +47,7 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         m$run_once,
         {
+          m$default_audio <- "on"
           m$default_accidental <- "sharp"
         },
         once = TRUE
@@ -156,14 +158,34 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         if (action == "learn") set_state_learning(session)
       })
 
+      # Toggle audio on off
+      output$audio_control_ui <- renderUI({
+        if (state$is_learning | state$is_completed_game | state$is_performance) {
+          div(
+            style = "display: inline-block; vertical-align: top; width: max-content;",
+            radioGroupButtons(
+              inputId = ns("audio_control"),
+              label = NULL,
+              choices = k$default_audio_choices,
+              selected = m$default_audio
+            )
+          )
+        } else {
+          NULL
+        }
+      })
+
       # Choose the default accidental to show in the fretboard when learning
       output$default_accidental_ui <- renderUI({
         if (state$is_learning | state$is_completed_game | state$is_performance) {
-          radioGroupButtons(
-            inputId = ns("default_accidental"),
-            label = NULL,
-            choices = k$default_accidental_choices,
-            selected = m$default_accidental
+          div(
+            style = "display: inline-block; vertical-align: top; width: max-content;",
+            radioGroupButtons(
+              inputId = ns("default_accidental"),
+              label = NULL,
+              choices = k$default_accidental_choices,
+              selected = m$default_accidental
+            )
           )
         } else {
           NULL

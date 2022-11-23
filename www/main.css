@@ -153,6 +153,17 @@ body {
   transform: translateY(0);
 }
 
+.inactive.guitar-string, .inactive.headstock-string{
+  pointer-events: none;
+}
+
+.inactive.guitar-string::after, .inactive.headstock-string::after{
+  opacity: 0.3;
+}
+
+.inactive.guitar-string:hover, .inactive.headstock-string:hover {
+  filter: brightness(100%);
+}
 .vibrating.guitar-string::after{
   animation: vibrate .05s infinite;
 }
@@ -206,6 +217,11 @@ body {
   font-weight: 900;
 }
 
+/* Audio controls */
+#main-fretboard-audio_control .btn.radiobtn {
+  padding-right: 6px;
+  padding-left: 7px;
+}
 
 /* letters */
 #main-letters-letters_div .rt-td-inner {

@@ -282,6 +282,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
           if (source == "fret") {
             response <- state$fret_select$val
+            activate_strings(session) # Turn all the strings back on
           }
 
           log_row <- make_log_row(
