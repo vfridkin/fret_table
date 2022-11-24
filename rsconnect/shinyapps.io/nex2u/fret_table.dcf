@@ -5,9 +5,9 @@ account: nex2u
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 7690565
-bundleId: 6537663
+bundleId: 6546654
 url: https://nex2u.shinyapps.io/fret_table/
-when: 1669020364.36973
-lastSyncTime: 1669020364.36974
+when: 1669205124.08375
+lastSyncTime: 1669205124.08375
 asMultiple: FALSE
 asStatic: FALSE
