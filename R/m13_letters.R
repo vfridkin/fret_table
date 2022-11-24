@@ -247,11 +247,13 @@ letters_server <- function(id, k_, r_ = reactive(NULL)) {
               question$note,
               role = "question"
             )
+            Sys.sleep(0.1)
 
             deactivate_strings_except(
               session,
               question$row
             )
+            Sys.sleep(0.1)
           }
         }
       ) # observeEvent
