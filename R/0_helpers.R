@@ -32,7 +32,9 @@ footer_element <- function() {
             div(
                 HTML("Posit Table Contest 2022 &copy; Vlad Fridkin"),
                 icon_link("linkedin", "https://www.linkedin.com/in/vfridkin/"),
-                icon_link("github", "https://github.com/vfridkin")
+                icon_link("github", "https://github.com/vfridkin"),
+                icon_link("youtube", "https://youtu.be/RQj60_IPf2M"),
+                
             )
         )
     )
