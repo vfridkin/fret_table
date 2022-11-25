@@ -1,5 +1,8 @@
 # Fret Table🎸
 
+[App link](https://vfridkin.shinyapps.io/fret_table/)
+<span style='font-size: x-small;'>Please note - using free tier limited to 25 hours a month 😅.</span>
+
 An interactive table to improve your speed and accuracy on the guitar fretboard. Built with [R Shiny](https://github.com/rstudio/shiny) and [reactable](https://glin.github.io/reactable/). Guitar sounds from [Gleitz MIDI.js soundfonts](https://github.com/gleitz/midi-js-soundfonts) and the idea for vibrating strings is from Pascal Thormeier's [article](https://dev.to/thormeier/let-s-build-an-actual-working-guitar-with-javascript-bfb).
 
 ![Frettable performance mode](www/frettable.png#center)_My performance mode_
