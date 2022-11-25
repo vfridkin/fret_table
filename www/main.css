@@ -150,6 +150,22 @@ body {
   position: absolute;
   z-index: 3;
   box-shadow: 0px 1px #888888;
+  transform: translateY(0);
+}
+
+.inactive.guitar-string, .inactive.headstock-string{
+  pointer-events: none;
+}
+
+.inactive.guitar-string::after, .inactive.headstock-string::after{
+  opacity: 0.3;
+}
+
+.inactive.guitar-string:hover, .inactive.headstock-string:hover {
+  filter: brightness(100%);
+}
+.vibrating.guitar-string::after{
+  animation: vibrate .05s infinite;
 }
 
 .headstock-string::after {
@@ -157,7 +173,17 @@ body {
   transform-origin: center right;
 }
 
-
+@keyframes vibrate {
+  0% {
+      transform: translateY(-2px);
+  }
+  50% {
+      transform: translateY(2px);
+  }
+  100% {
+      transform: translateY(-2px);
+  }
+}
 
 /* fret marker */
 .fret-marker {
@@ -191,6 +217,11 @@ body {
   font-weight: 900;
 }
 
+/* Audio controls */
+#main-fretboard-audio_control .btn.radiobtn {
+  padding-right: 6px;
+  padding-left: 7px;
+}
 
 /* letters */
 #main-letters-letters_div .rt-td-inner {
@@ -301,4 +332,14 @@ body {
 
 .footer__text-box > div:hover {
   color: rgba(var(--colour-black-rgb), var(--alpha-high));
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }

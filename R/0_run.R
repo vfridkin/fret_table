@@ -12,5 +12,5 @@ vsar <- function() {
   rstudioapi::documentSaveAll()
   app_dir <- "C:/Users/vfrid/Documents/R_projects//fret_table"
   # app_dir <- "C:/Users/vladi/Documents/R/fret_table"
-  runApp(app_dir, launch.browser = TRUE, port = 7556)
+  runApp(app_dir, launch.browser = TRUE)
 }

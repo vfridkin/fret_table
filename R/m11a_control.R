@@ -39,8 +39,8 @@ control_ui <- function(id) {
           style = "
             display: inline-block;
             width: 50px;
-            vertical-align:
-            top; padding-top: 5px;
+            vertical-align: top;
+            padding-top: 5px;
           ",
           transport_button(ns("info_button"),
             "info",
@@ -211,7 +211,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
       )
 
       # Game timer -------------------------------------------------------------
-      play_duration <- reactive({
+      observe({
         if (state$is_playing) {
           invalidateLater(1000)
           state$play_seconds <- difftime(
@@ -220,11 +220,10 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
             units = "secs"
           )
         }
-        state$play_seconds
       })
 
       output$timer <- renderText({
-        td <- seconds_to_period(play_duration())
+        td <- seconds_to_period(state$play_seconds)
         seconds <- round(second(td))
         minutes <- round(minute(td))
         sprintf("%02d:%02d", minutes, seconds)
@@ -254,9 +253,12 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           req(state$is_playing)
 
           turn <- state$play_turn
-          req(turn > 0)
+          if (turn < 1) {
+            return()
+          }
 
-          state$question <- questions()[turn]
+          questions <- questions()
+          state$question <- questions[turn]
         }
       )
 
@@ -282,6 +284,7 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
 
           if (source == "fret") {
             response <- state$fret_select$val
+            activate_strings(session) # Turn all the strings back on
           }
 
           log_row <- make_log_row(
@@ -369,7 +372,6 @@ control_server <- function(id, k_, r_ = reactive(NULL)) {
           }
 
           df <- setDT(as.list(correct))[]
-          if (ncol(df) != turns) browser()
           names(df) <- col_names
 
           df

@@ -2,6 +2,7 @@ get_questions <- function(game, range, turns) {
     rows <- length(k$open_notes)
     displays <- paste0("all_", range)
     question_types <- sample(game, turns, replace = TRUE)
+    set.seed(Sys.time())
 
     # Take double the number of questions to minimise chance of repeats
     df <- rep(question_types, 2) %>%
@@ -19,9 +20,9 @@ get_questions <- function(game, range, turns) {
                 fret <- glue("fret{column-1}") %>% as.character()
                 note <- notes[column]
 
-                # When choosing fret only keep the note
+                # When choosing fret, randomise the row, leave col unset (0)
                 if (type == "note_fret") {
-                    row <- 0L
+                    row <- sample(1:k$string_count, 1)
                     column <- 0L
                     open_note <- ""
                     fret <- ""

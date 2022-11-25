@@ -7,6 +7,8 @@ fretboard_ui <- function(id) {
   tagList(
     div(
       id = "fretboard_div",
+      class = "noselect",
+      style = "cursor: pointer;",
       fluidRow(
         style = "margin-top: 30px;",
         reactableOutput(ns("fretboard_rt"))
@@ -23,7 +25,8 @@ fretboard_ui <- function(id) {
           style = "margin-top: 3px; height: 5px; z-index: 10;",
           width = 4,
           align = "right",
-          uiOutput(ns("default_accidental_ui"))
+          uiOutput(ns("audio_control_ui"), style = "display: inline-block;"),
+          uiOutput(ns("default_accidental_ui"), style = "display: inline-block;")
         )
       ) # fluidRow
     ) # div
@@ -38,12 +41,14 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
 
       m <- reactiveValues(
         run_once = FALSE,
+        default_audio = NULL,
         default_accidental = NULL
       )
 
       observeEvent(
         m$run_once,
         {
+          m$default_audio <- "on"
           m$default_accidental <- "sharp"
         },
         once = TRUE
@@ -60,6 +65,12 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       # fret performance data with formatting
       fret_performance_html <- reactive({
         df_narrow <- state$performance_data$fret_data
+
+        # Guard missing data - no games played
+        if (is.null(df_narrow)) {
+          return(fret_note_html)
+        }
+
         df_narrow <- df_narrow %>% add_missing_coordinates()
 
         # Reshape to fret table
@@ -148,18 +159,43 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
         if (action == "learn") set_state_learning(session)
       })
 
-      # Choose the default accidental to show in the fretboard when learning
-      output$default_accidental_ui <- renderUI({
+      # Toggle audio on off
+      output$audio_control_ui <- renderUI({
         if (state$is_learning | state$is_completed_game | state$is_performance) {
-          radioGroupButtons(
-            inputId = ns("default_accidental"),
-            label = NULL,
-            choices = k$default_accidental_choices,
-            selected = m$default_accidental
+          div(
+            style = "display: inline-block; vertical-align: top; width: max-content;",
+            radioGroupButtons(
+              inputId = ns("audio_control"),
+              label = NULL,
+              choices = k$default_audio_choices,
+              selected = m$default_audio
+            )
           )
         } else {
           NULL
         }
+      })
+
+
+      # Choose the default accidental to show in the fretboard when learning
+      output$default_accidental_ui <- renderUI({
+        if (state$is_learning | state$is_completed_game | state$is_performance) {
+          div(
+            style = "display: inline-block; vertical-align: top; width: max-content;",
+            radioGroupButtons(
+              inputId = ns("default_accidental"),
+              label = NULL,
+              choices = k$default_accidental_choices,
+              selected = m$default_accidental
+            )
+          )
+        } else {
+          NULL
+        }
+      })
+
+      observeEvent(input$audio_control, {
+        m$default_audio <- input$audio_control
       })
 
       observeEvent(input$default_accidental, {
@@ -226,9 +262,14 @@ fretboard_server <- function(id, k_, r_ = reactive(NULL)) {
       observeEvent(
         input$fret_click,
         {
+          click <- input$fret_click
+          if (m$default_audio == "on") {
+            vibrate_string(session, click)
+            play_string(session, click)
+          }
           req(state$is_playing)
           state$fret_select <- list(
-            val = input$fret_click,
+            val = click,
             time = Sys.time()
           )
           state$input_source <- "fret"

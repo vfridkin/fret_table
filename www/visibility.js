@@ -103,3 +103,17 @@ Shiny.addCustomMessageHandler("letter_add_highlight", function (input) {
   $(button).css("background", input.highlight_colour);
   $(button).css("color", input.colour);
 });
+
+// Deactivate strings
+Shiny.addCustomMessageHandler("deactivate_strings", function (strings) {
+  $.each(strings, function (index, value) {
+    $(value).addClass("inactive");
+  });
+});
+
+// Activate strings
+Shiny.addCustomMessageHandler("activate_strings", function (strings) {
+  $.each(strings, function (index, value) {
+    $(value).removeClass("inactive");
+  });
+});
